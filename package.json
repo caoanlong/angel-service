@@ -1,0 +1,27 @@
+{
+  "name": "angel_node_service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/jyw91/angel_node_service.git"
+  },
+  "author": "caoanlong",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "jsonwebtoken": "^8.3.0",
+    "koa": "^2.5.1",
+    "koa-bodyparser": "^4.2.1",
+    "koa-logger": "^3.2.0",
+    "koa-router": "^7.4.0",
+    "koa2-cors": "^2.0.5",
+    "mysql2": "^1.5.3",
+    "node-snowflake": "^0.0.1",
+    "sequelize": "^4.38.0"
+  }
+}
