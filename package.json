@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cross-env env_config=test node ./bin/www",
+    "start:test": "cross-env env_config=test pm2 start ./bin/www -n tms",
+    "start:prod": "cross-env env_config=prod pm2 start ./bin/www -n tms"
   },
   "repository": {
     "type": "git",
@@ -14,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "cross-env": "^5.2.0",
     "jsonwebtoken": "^8.3.0",
     "koa": "^2.5.1",
     "koa-bodyparser": "^4.2.1",
@@ -22,6 +26,8 @@
     "koa2-cors": "^2.0.5",
     "mysql2": "^1.5.3",
     "node-snowflake": "^0.0.1",
-    "sequelize": "^4.38.0"
+    "redis": "^2.8.0",
+    "sequelize": "^4.38.0",
+    "validator": "^10.4.0"
   }
 }
