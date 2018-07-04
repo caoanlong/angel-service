@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize')
-const sequelize = require('../config/squelize')
+const sequelize = require('../config/sequelize')
 
 /* 权限角色与菜单关联 */
 const SysRoleMenu = sequelize.define('sysRoleMenu', {

@@ -1,6 +1,6 @@
 const Router = require('koa-router')
 const router = new Router({ prefix: '/admin' })
-const InterceptorController = require('../controller/InterceptorController')
+const InterceptorController = require('../../controller/InterceptorController')
 
 router.use(InterceptorController.adminInterceptor())
 

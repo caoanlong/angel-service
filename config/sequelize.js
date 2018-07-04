@@ -59,7 +59,7 @@ const sequelize = new Sequelize(config.database, config.user, config.password, {
 	operatorsAliases
 })
 
-// sequelize.sync()
+sequelize.sync()
 
 console.log('mysql connect success at ' + config.port + '!!!')
 

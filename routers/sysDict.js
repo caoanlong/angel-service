@@ -17,4 +17,7 @@ router.post('/update', SysDictController.update())
 /* 删除字典 */
 router.post('/delete', SysDictController.del())
 
+/* 查询所有类型 */
+router.get('/types', SysDictController.findTypeList())
+
 module.exports = router

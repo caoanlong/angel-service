@@ -21,7 +21,7 @@ app.use(cors({
     allowHeaders: ['Content-Type', 'Accept', 'X-Access-Token']
 }))
 
-app.use(require('./admin').routes())
-app.use(require('./api').routes())
+app.use(require('./routers/admin').routes())
+app.use(require('./routers/api').routes())
 
 module.exports = app

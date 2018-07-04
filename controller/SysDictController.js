@@ -111,6 +111,19 @@ class SysDictController extends BaseController {
             }
         }
     }
+    /**
+     * groupBy查询所有类别
+     */
+    findTypeList() {
+        return async ctx => {
+            try {
+                const sysDicts = await SysDict.findAll({ attributes: ['type'], group: ['type'] })
+                ctx.body = this.responseSussess(sysDicts)
+            } catch (err) {
+                ctx.body = this.responseError(err)
+            }
+        }
+    }
 }
 
 module.exports = new SysDictController()

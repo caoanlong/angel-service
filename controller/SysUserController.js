@@ -3,6 +3,8 @@ const SysUser = require('../model/SysUser')
 const SysRole = require('../model/SysRole')
 const validator = require('validator')
 const { snowflake, generatePassword } = require('../utils')
+const { jwtConfig } = require('../config')
+const jwt = require('jsonwebtoken')
 
 class SysUserController extends BaseController {
     /**
@@ -53,13 +55,15 @@ class SysUserController extends BaseController {
      * 根据token查询详情
      */
     findByToken() {
-        const userId = ctx.state.user.userId
-        try {
-            const sysUser = await SysUser.findById(userId)
-            delete sysUser.password
-            ctx.body = this.responseSussess(sysUser)
-        } catch (err) {
-            ctx.body = this.responseError(err)
+        return async ctx => {
+            const userId = ctx.state.user.userId
+            try {
+                const sysUser = await SysUser.findById(userId)
+                delete sysUser.password
+                ctx.body = this.responseSussess(sysUser)
+            } catch (err) {
+                ctx.body = this.responseError(err)
+            }
         }
     }
     /**
@@ -70,12 +74,13 @@ class SysUserController extends BaseController {
             const ctxUserId = ctx.state.user.userId
             const userId = snowflake.nextId()
             const { name, mobile, avatar, password, roleId, isDisabled } = ctx.request.body
+            const passwordHash = generatePassword(password)
             const data = { 
                 userId, 
                 name, 
                 mobile, 
                 avatar, 
-                password, 
+                password: passwordHash, 
                 roleId, 
                 isDisabled, 
                 createBy: ctxUserId, 
@@ -106,13 +111,48 @@ class SysUserController extends BaseController {
                     name, 
                     mobile, 
                     avatar, 
-                    password, 
                     roleId, 
                     isDisabled, 
                     updateBy: ctxUserId, 
                     updateTime: new Date() 
                 }
+                if (password) data.password = generatePassword(password)
                 await SysUser.update(data, { where: { userId } })
+                ctx.body = this.responseSussess()
+            } catch (err) {
+                ctx.body = this.responseError(err)
+            }
+        }
+    }
+    /**
+     * 根据token修改资料
+     */
+    updateByToken() {
+        return async ctx => {
+            const userId = ctx.state.user.userId
+            const { mobile, avatar } = ctx.request.body
+            try {
+                const data = { mobile, avatar }
+                await SysUser.update(data, { where: { userId } })
+                ctx.body = this.responseSussess()
+            } catch (err) {
+                ctx.body = this.responseError(err)
+            }
+        }
+    }
+    /**
+     * 根据token修改密码
+     */
+    updatePassword() {
+        return async ctx => {
+            const userId = ctx.state.user.userId
+            const { oldPassword, newPassword } = ctx.request.body
+            const oldPasswordHash = generatePassword(oldPassword)
+            try {
+                const sysUser = await SysUser.findById(userId)
+                if (sysUser.password != oldPasswordHash) throw ('原密码不正确！')
+                const password = generatePassword(newPassword)
+                await SysUser.update({ password }, { where: { userId } })
                 ctx.body = this.responseSussess()
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -140,10 +180,21 @@ class SysUserController extends BaseController {
     login() {
         return async ctx => {
             const { name, password } = ctx.request.body
+            const passwordHash = generatePassword(password)
             try {
                 if (validator.isEmpty(name)) throw('用户名不能为空！')
                 if (validator.isEmpty(password)) throw('密码不能为空！')
-                SysUser.findOne({})
+                const sysUser = await SysUser.find({ where: { name } })
+                if (!sysUser) throw ('用户不存在！')
+                if (sysUser.password != passwordHash) throw ('密码不正确！')
+                const payLoad = {
+                    userId: sysUser.userId,
+                    avatar: sysUser.avatar,
+                    name: sysUser.name,
+                    mobile: sysUser.mobile
+                }
+                const token = await jwt.sign(payLoad, jwtConfig.secret, jwtConfig.exp)
+                ctx.set({ 'X-Access-Token': token })
                 ctx.body = this.responseSussess()
             } catch (err) {
                 ctx.body = this.responseError(err)
