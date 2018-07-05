@@ -1,6 +1,8 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../config/sequelize')
 
+const SysRole = require('./SysRole')
+
 /* 系统用户 */
 const SysUser = sequelize.define('sysUser', {
 	// 用户ID
@@ -54,7 +56,13 @@ const SysUser = sequelize.define('sysUser', {
 	}
 })
 
-SysUser.belongsTo(SysUser, {foreignKey: 'createBy'})
-SysUser.belongsTo(SysUser, {foreignKey: 'updateBy'})
+// SysUser.belongsTo(SysRole, { as: 'role', foreignKey: 'roleId' })
+// SysUser.belongsTo(SysUser, { as: 'createUser', foreignKey: 'createBy'})
+// SysUser.belongsTo(SysUser, { as: 'updateUser', foreignKey: 'updateBy'})
+// SysUser.hasMany(SysUser, { as: 'createUser', foreignKey: 'createBy' })
+// SysUser.hasMany(SysUser, { as: 'updateUser', foreignKey: 'updateBy' })
+
+// SysUser.hasMany(SysRole, { as: 'createUser', foreignKey: 'createBy' })
+// SysUser.hasMany(SysRole, { as: 'updateUser', foreignKey: 'updateBy' })
 
 module.exports = SysUser

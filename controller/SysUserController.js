@@ -26,7 +26,15 @@ class SysUserController extends BaseController {
             if (startTime) where['createTime']['$gte'] = startTime
             if (endTime) where['createTime']['$lte'] = endTime
             try {
-                const sysUsers = await SysUser.findAndCountAll({ where, offset, limit: pageSize, order: [ ['createTime', 'DESC'] ] })
+                const sysUsers = await SysUser.findAndCountAll({ 
+                    where, offset, limit: pageSize, 
+                    // include: [
+                    //     { model: SysUser, as: 'createUser' }, 
+                    //     { model: SysUser, as: 'updateUser' },
+                    //     { model: SysRole, as: 'role' }
+                    // ], 
+                    order: [ ['createTime', 'DESC'] ] 
+                })
                 ctx.body = this.responseSussess({ pageIndex, pageSize, count: sysUsers.count, rows: sysUsers.rows })
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -41,10 +49,8 @@ class SysUserController extends BaseController {
             const { userId } = ctx.query
             try {
                 if (validator.isEmpty(userId)) throw('userId不能为空！')
-                const sysUser = await SysUser.findById(userId, {
-                    include: [ { model: SysRole } ]
-                })
-                delete sysUser.password
+                const sysUser = await SysUser.findById(userId)
+                sysUser.password = null
                 ctx.body = this.responseSussess(sysUser)
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -59,7 +65,7 @@ class SysUserController extends BaseController {
             const userId = ctx.state.user.userId
             try {
                 const sysUser = await SysUser.findById(userId)
-                delete sysUser.password
+                sysUser.password = null
                 ctx.body = this.responseSussess(sysUser)
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -203,4 +209,4 @@ class SysUserController extends BaseController {
     }
 }
 
-module.exports = new SysUserController()
+module.exports = SysUserController

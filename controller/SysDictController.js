@@ -126,4 +126,4 @@ class SysDictController extends BaseController {
     }
 }
 
-module.exports = new SysDictController()
+module.exports = SysDictController

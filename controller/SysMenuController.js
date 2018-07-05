@@ -145,4 +145,4 @@ class SysMenuController extends BaseController {
     }
 }
 
-module.exports = new SysMenuController()
+module.exports = SysMenuController

@@ -1,5 +1,6 @@
 const BaseController = require('./BaseController')
 const SysRole = require('../model/SysRole')
+const SysUser = require('../model/SysUser')
 const SysRoleMenu = require('../model/SysRoleMenu')
 const validator = require('validator')
 const { snowflake } = require('../utils')
@@ -19,7 +20,14 @@ class SysRoleController extends BaseController {
             if (startTime) where['createTime']['$gte'] = startTime
             if (endTime) where['createTime']['$lte'] = endTime
             try {
-                const sysRoles = await SysRole.findAndCountAll({ where, offset, limit: pageSize, order: [ ['createTime', 'DESC'] ] })
+                const sysRoles = await SysRole.findAndCountAll({ 
+                    where, offset, limit: pageSize, 
+                    // include: [
+                    //     { model: SysUser, as: 'createUser' }, 
+                    //     { model: SysUser, as: 'updateUser' }
+                    // ], 
+                    order: [ ['createTime', 'DESC'] ] 
+                })
                 ctx.body = this.responseSussess({ pageIndex, pageSize, count: sysRoles.count, rows: sysRoles.rows })
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -124,4 +132,4 @@ class SysRoleController extends BaseController {
     }
 }
 
-module.exports = new SysRoleController()
+module.exports = SysRoleController

@@ -1,11 +1,18 @@
 module.exports = {
 	port: 3002,
-	mysql: {
-        host: '118.89.20.215',
+	// mysql: {
+    //     host: '118.89.20.215',
+    //     port: 3306,
+    //     user: 'root',
+    //     password: 'jyw12345',
+    //     database: 'angel-server'
+    // },
+    mysql: {
+        host: '47.106.171.37',
         port: 3306,
         user: 'root',
-        password: 'jyw12345',
-        database: 'angel-server'
+        password: 'a1989204',
+        database: 'angel_test'
     },
 	redis: {
 		host: '192.168.1.48',

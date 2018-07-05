@@ -34,7 +34,8 @@ const SysRole = sequelize.define('sysRole', {
 	}
 })
 
-SysRole.belongsTo(SysUser, {foreignKey: 'createBy'})
-SysRole.belongsTo(SysUser, {foreignKey: 'updateBy'})
+// SysRole.belongsTo(SysUser, { as: 'createUser', foreignKey: 'createBy' })
+// SysRole.belongsTo(SysUser, { as: 'updateUser', foreignKey: 'updateBy' })
+
 
 module.exports = SysRole

@@ -1,4 +1,4 @@
-const config = require('./index').mysql
+const { mysql } = require('./index')
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 
@@ -39,9 +39,9 @@ const operatorsAliases = {
 	$col: Op.col
 }
 
-const sequelize = new Sequelize(config.database, config.user, config.password, {
-	host: config.host,
-	port: config.port,
+const sequelize = new Sequelize(mysql.database, mysql.user, mysql.password, {
+	host: mysql.host,
+	port: mysql.port,
 	dialect: 'mysql',
 	pool: {
 		idle: 30000,
@@ -59,8 +59,8 @@ const sequelize = new Sequelize(config.database, config.user, config.password, {
 	operatorsAliases
 })
 
-sequelize.sync()
+// sequelize.sync({force: true})
 
-console.log('mysql connect success at ' + config.port + '!!!')
+console.log('mysql connect success at ' + mysql.port + '!!!')
 
 module.exports = sequelize

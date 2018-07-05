@@ -10,10 +10,11 @@ app.use(logger())
 
 app.use(cors({
     origin: function (ctx) {
-        if (ctx.url === '/test') {
-            return "*"; // 允许来自所有域名请求
-        }
-        return ctx.request.header.origin
+        return "*"
+        // if (ctx.url === '/test') {
+        //     return "*"; // 允许来自所有域名请求
+        // }
+        // return ctx.request.header.origin
         // return 'http://localhost:8080' // 这样就能只允许 http://localhost:8080 这个域名的请求了
     },
     exposeHeaders: ['Accept', 'X-Access-Token'],
@@ -22,6 +23,6 @@ app.use(cors({
 }))
 
 app.use(require('./routers/admin').routes())
-app.use(require('./routers/api').routes())
+app.use(require('./routers/app-h5').routes())
 
 module.exports = app

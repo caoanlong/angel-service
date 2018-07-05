@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cross-env env_config=test node ./bin/www",
-    "start:test": "cross-env env_config=test pm2 start ./bin/www -n tms",
-    "start:prod": "cross-env env_config=prod pm2 start ./bin/www -n tms"
+    "start:test": "cross-env env_config=test pm2 start ./bin/www -n angel_server",
+    "start:prod": "cross-env env_config=prod pm2 start ./bin/www -n angel_server"
   },
   "repository": {
     "type": "git",

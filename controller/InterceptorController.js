@@ -11,7 +11,7 @@ class InterceptorController extends BaseController {
             }
             const token = ctx.headers['x-access-token']
             try {
-                if (!token) throw ('token不存在')
+                if (!token || token == 'undefined') throw ('token不存在')
                 const decoded = await jwt.verify(token, jwtConfig.secret)
                 if (!decoded) throw ('token非法')
                 if (parseInt(Date.now() / 1000) > decoded.exp) throw ('token已过期')
@@ -43,4 +43,4 @@ class InterceptorController extends BaseController {
     }
 }
 
-module.exports = new InterceptorController()
+module.exports = InterceptorController
