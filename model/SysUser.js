@@ -19,13 +19,13 @@ const SysUser = sequelize.define('sysUser', {
 	// 电话
 	mobile: {
 		type: Sequelize.STRING(16)
-    },
-    // 头像
-    avatar: {
+	},
+	// 头像
+	avatar: {
 		type: Sequelize.STRING(1024)
-    },
-    // 密码
-    password: {
+	},
+	// 密码
+	password: {
 		type: Sequelize.STRING(255),
 		allowNull: false
 	},
@@ -56,13 +56,6 @@ const SysUser = sequelize.define('sysUser', {
 	}
 })
 
-// SysUser.belongsTo(SysRole, { as: 'role', foreignKey: 'roleId' })
-// SysUser.belongsTo(SysUser, { as: 'createUser', foreignKey: 'createBy'})
-// SysUser.belongsTo(SysUser, { as: 'updateUser', foreignKey: 'updateBy'})
-// SysUser.hasMany(SysUser, { as: 'createUser', foreignKey: 'createBy' })
-// SysUser.hasMany(SysUser, { as: 'updateUser', foreignKey: 'updateBy' })
-
-// SysUser.hasMany(SysRole, { as: 'createUser', foreignKey: 'createBy' })
-// SysUser.hasMany(SysRole, { as: 'updateUser', foreignKey: 'updateBy' })
+SysUser.belongsTo(SysRole, { as: 'role', foreignKey: 'roleId' })
 
 module.exports = SysUser

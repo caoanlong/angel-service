@@ -60,6 +60,7 @@ const sequelize = new Sequelize(mysql.database, mysql.user, mysql.password, {
 })
 
 // sequelize.sync({force: true})
+sequelize.sync()
 
 console.log('mysql connect success at ' + mysql.port + '!!!')
 

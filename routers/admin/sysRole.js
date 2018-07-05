@@ -17,7 +17,10 @@ router.post('/update', new SysRoleController().update())
 /* 删除角色 */
 router.post('/delete', new SysRoleController().del())
 
+/* 获取角色权限列表 */
+router.get('/findMenuList', new SysRoleController().findMenuList())
+
 /* 修改角色权限菜单 */
-router.post('/update/menu', new SysRoleController().updateMenu())
+router.post('/addAuthority', new SysRoleController().addAuthority())
 
 module.exports = router
