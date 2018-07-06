@@ -17,4 +17,7 @@ router.post('/update', new SysUserController().update())
 /* 删除用户 */
 router.post('/delete', new SysUserController().del())
 
+/* 获取用户权限菜单 */
+router.get('/findMenuList', new SysUserController().findMenuList())
+
 module.exports = router

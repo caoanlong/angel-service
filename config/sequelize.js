@@ -55,12 +55,12 @@ const sequelize = new Sequelize(mysql.database, mysql.user, mysql.password, {
 	},
 	// operatorsAliases: false,
 	timezone: '+08:00',
-	logging: false,
+	logging: true,
 	operatorsAliases
 })
 
 // sequelize.sync({force: true})
-sequelize.sync()
+// sequelize.sync()
 
 console.log('mysql connect success at ' + mysql.port + '!!!')
 

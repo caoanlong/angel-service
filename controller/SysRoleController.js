@@ -18,8 +18,9 @@ class SysRoleController extends BaseController {
 			const offset = (pageIndex - 1) * pageSize
 			const where = {}
 			if (name) where['name'] = { $like: '%' + name + '%' }
-			if (startTime) where['createTime']['$gte'] = startTime
-			if (endTime) where['createTime']['$lte'] = endTime
+            if (startTime || endTime) where['createTime'] = {}
+            if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))
+            if (endTime) where['createTime']['$lte'] = new Date(Number(endTime))
 			try {
 				const sysRoles = await SysRole.findAndCountAll({ 
 					where, offset, limit: pageSize, 
@@ -99,8 +100,10 @@ class SysRoleController extends BaseController {
 		return async ctx => {
 			const { ids } = ctx.request.body
 			try {
-				if (!ids || ids.length == 0) throw('ids不能为空！')
-				await SysRole.destroy({ where: { roleId: { $in: ids }}})
+                if (!ids || ids.length == 0) throw('ids不能为空！')
+                const sysUsers = await SysUser.findAll({ where: { roleId: { $in: ids } } })
+                if (sysUsers.length > 0) throw (`角色已关联了${sysUsers.length}个用户！`)
+				await SysRole.destroy({ where: { roleId: { $in: ids } } })
 				ctx.body = this.responseSussess()
 			} catch (err) {
 				ctx.body = this.responseError(err)
@@ -136,7 +139,8 @@ class SysRoleController extends BaseController {
 			const { roleId, menuIds = [] } = ctx.request.body
 			const roleMenus = []
 			try {
-				if (validator.isEmpty(roleId)) throw('roleId不能为空！')
+                if (validator.isEmpty(roleId)) throw('roleId不能为空！')
+                await SysRoleMenu.destroy({ where: { roleId } })
 				const sysMenus = await SysMenu.findAll({
 					where: { menuId: { $in: menuIds}}
 				})
@@ -147,10 +151,8 @@ class SysRoleController extends BaseController {
 					}
 				}
 				for (let i = 0; i < menuIds.length; i++) {
-					roleMenus.push({ menuId: menuIds[i], roleId })
-				}
-				await SysRoleMenu.destroy({ where: { roleId } })
-				console.log(roleMenus)
+                    roleMenus.push({ menuId: menuIds[i], roleId })
+                }
 				await SysRoleMenu.bulkCreate(roleMenus)
 				ctx.body = this.responseSussess()
 			} catch (err) {

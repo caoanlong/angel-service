@@ -1,8 +1,9 @@
 const BaseController = require('./BaseController')
 const SysUser = require('../model/SysUser')
 const SysRole = require('../model/SysRole')
+const SysMenu = require('../model/SysMenu')
 const validator = require('validator')
-const { snowflake, generatePassword } = require('../utils')
+const { snowflake, generatePassword, menusTree } = require('../utils')
 const { jwtConfig } = require('../config')
 const jwt = require('jsonwebtoken')
 
@@ -16,15 +17,21 @@ class SysUserController extends BaseController {
 			pageIndex = Math.max( Number(pageIndex), 1 )
 			pageSize = Number(pageSize)
 			const offset = (pageIndex - 1) * pageSize
-			const where = {}
+            const where = {}
 			if (keyword) {
-				where['name'] = { $like: '%' + keyword + '%' }
-				where['mobile'] = { $like: '%' + keyword + '%' }
+                where['$or'] = {}
+                where['$or']['name'] = { $like: '%' + keyword + '%' }
+                where['$or']['mobile'] = { $like: '%' + keyword + '%' }
 			}
 			if (roleId) where['roleId'] = roleId
-			if (isDisabled) where['isDisabled'] = isDisabled
-			if (startTime) where['createTime']['$gte'] = startTime
-			if (endTime) where['createTime']['$lte'] = endTime
+            if (isDisabled == 'true') {
+                where['isDisabled'] = true
+            } else if (isDisabled == 'false') {
+                where['isDisabled'] = false
+            }
+            if (startTime || endTime) where['createTime'] = {}
+			if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))
+            if (endTime) where['createTime']['$lte'] = new Date(Number(endTime))
 			try {
 				const sysUsers = await SysUser.findAndCountAll({ 
 					where, offset, limit: pageSize, 
@@ -45,7 +52,9 @@ class SysUserController extends BaseController {
 			const { userId } = ctx.query
 			try {
 				if (validator.isEmpty(userId)) throw('userId不能为空！')
-				const sysUser = await SysUser.findById(userId)
+				const sysUser = await SysUser.findById(userId, {
+                    include: { model: SysRole, as: 'role' }
+                })
 				sysUser.password = null
 				ctx.body = this.responseSussess(sysUser)
 			} catch (err) {
@@ -169,13 +178,39 @@ class SysUserController extends BaseController {
 			const { ids } = ctx.request.body
 			try {
 				if (!ids || ids.length == 0) throw('ids不能为空！')
-				await SysUser.destroy({ where: { userId: { $in: ids }}})
+				await SysUser.destroy({ where: { userId: { $in: ids } } })
 				ctx.body = this.responseSussess()
 			} catch (err) {
 				ctx.body = this.responseError(err)
 			}
 		}
-	}
+    }
+    /**
+	 * 获取用户权限菜单
+	 */
+    findMenuList() {
+        return async ctx => {
+            const roleId = ctx.state.user.roleId
+            try {
+                const sysRole = await SysRole.findById(roleId, {
+                    include: [{ model: SysMenu }]
+                })
+                const menus = sysRole.sysMenus
+                let menuIds = menus.map(item => item.menuId)
+                menus.forEach(menu => {
+                    if (menu.menuPid) menuIds.push(menu.menuPid)
+                })
+                menuIds = Array.from(new Set(menuIds))
+                
+                const sysMenus = await SysMenu.findAll({ where: { menuId: { $in: menuIds } } })
+                console.log(sysMenus)
+                const menuList = await menusTree(sysMenus)
+                ctx.body = this.responseSussess({ menuList, menuIds })
+            } catch (err) {
+                ctx.body = this.responseError(err)
+            }
+        }
+    }
 	/**
 	 * 登录
 	 */
@@ -191,6 +226,7 @@ class SysUserController extends BaseController {
 				if (sysUser.password != passwordHash) throw ('密码不正确！')
 				const payLoad = {
 					userId: sysUser.userId,
+					roleId: sysUser.roleId,
 					avatar: sysUser.avatar,
 					name: sysUser.name,
 					mobile: sysUser.mobile
