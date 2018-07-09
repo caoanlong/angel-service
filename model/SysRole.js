@@ -1,8 +1,6 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../config/sequelize')
 
-const SysUser = require('./SysUser')
-
 /* 系统角色 */
 const SysRole = sequelize.define('sysRole', {
 	// 角色ID

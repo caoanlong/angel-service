@@ -1,8 +1,6 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../config/sequelize')
 
-const SysUser = require('./SysUser')
-
 /* 系统字典 */
 const SysDict = sequelize.define('sysDict', {
 	// 字典ID
@@ -52,8 +50,5 @@ const SysDict = sequelize.define('sysDict', {
 		type: Sequelize.DATE
 	}
 })
-
-SysDict.belongsTo(SysUser, {foreignKey: 'createBy'})
-SysDict.belongsTo(SysUser, {foreignKey: 'updateBy'})
 
 module.exports = SysDict

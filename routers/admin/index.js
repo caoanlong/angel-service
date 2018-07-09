@@ -12,5 +12,7 @@ router.use(require('./sysUser').routes())
 router.use(require('./sysRole').routes())
 router.use(require('./sysMenu').routes())
 router.use(require('./sysDict').routes())
+router.use(require('./doctor').routes())
+router.use(require('./teacher').routes())
 
 module.exports = router

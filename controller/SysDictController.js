@@ -1,5 +1,7 @@
 const BaseController = require('./BaseController')
 const SysDict = require('../model/SysDict')
+const validator = require('validator')
+const { snowflake } = require('../utils')
 
 class SysDictController extends BaseController {
     /**
@@ -14,8 +16,9 @@ class SysDictController extends BaseController {
             const where = {}
             if (description) where['description'] = { $like: '%' + description + '%' }
             if (type) where['type'] = type
-            if (startTime) where['createTime']['$gte'] = startTime
-            if (endTime) where['createTime']['$lte'] = endTime
+            if (startTime || endTime) where['createTime'] = {}
+            if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))
+            if (endTime) where['createTime']['$lte'] = new Date(Number(endTime))
             try {
                 const sysDicts = await SysDict.findAndCountAll({ where, offset, limit: pageSize, order: [ ['createTime', 'DESC'] ] })
                 ctx.body = this.responseSussess({ pageIndex, pageSize, count: sysDicts.count, rows: sysDicts.rows })
@@ -117,7 +120,7 @@ class SysDictController extends BaseController {
     findTypeList() {
         return async ctx => {
             try {
-                const sysDicts = await SysDict.findAll({ attributes: ['type'], group: ['type'] })
+                const sysDicts = await SysDict.findAll({ attributes: ['type', 'description'], group: ['type'] })
                 ctx.body = this.responseSussess(sysDicts)
             } catch (err) {
                 ctx.body = this.responseError(err)
