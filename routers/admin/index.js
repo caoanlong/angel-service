@@ -14,5 +14,7 @@ router.use(require('./sysMenu').routes())
 router.use(require('./sysDict').routes())
 router.use(require('./doctor').routes())
 router.use(require('./teacher').routes())
+router.use(require('./lessonSet').routes())
+router.use(require('./platformProduct').routes())
 
 module.exports = router

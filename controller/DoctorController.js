@@ -91,8 +91,6 @@ class DoctorController extends BaseController {
                     mobile,
                     avatar,
                     remark,
-                    createBy: userId,
-                    createTime: new Date(),
                     updateBy: userId,
                     updateTime: new Date()
                 }

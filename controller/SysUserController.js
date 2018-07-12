@@ -203,7 +203,6 @@ class SysUserController extends BaseController {
                 menuIds = Array.from(new Set(menuIds))
                 
                 const sysMenus = await SysMenu.findAll({ where: { menuId: { $in: menuIds } } })
-                console.log(sysMenus)
                 const menuList = await menusTree(sysMenus)
                 ctx.body = this.responseSussess({ menuList, menuIds })
             } catch (err) {
