@@ -2,9 +2,6 @@ const Router = require('koa-router')
 const router = new Router({prefix: '/admin'})
 const InterceptorController = require('../../controller/InterceptorController')
 
-router.get('/i', async ctx => {
-    ctx.body = 'admin'
-})
 router.use(new InterceptorController().adminInterceptor())
 
 router.use(require('./auth').routes())

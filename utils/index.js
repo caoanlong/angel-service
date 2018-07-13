@@ -41,3 +41,12 @@ exports.generatePassword = (password) => {
 	const key = crypto.pbkdf2Sync(password, 'xxoo_longge19890204_fuck', 1000, 32, 'sha256')
 	return key.toString('hex')
 }
+
+exports.getVerCode = (num) => {
+	let result = ''
+	for (let i = 0; i < num; i++) {
+		let ran = Math.floor(Math.random() * 10)
+		result += ran
+	}
+	return result
+}

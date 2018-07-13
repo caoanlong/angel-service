@@ -34,7 +34,7 @@ class InterceptorController extends BaseController {
                 const decoded = await jwt.verify(token, jwtConfig.secret)
                 if (!decoded) throw ('token非法')
                 if (parseInt(Date.now() / 1000) > decoded.exp) throw ('token已过期')
-                ctx.state.user = decoded
+                ctx.state.member = decoded
                 await next()
             } catch (err) {
                 ctx.body = this.responseError(err, 101)
