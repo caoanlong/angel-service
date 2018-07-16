@@ -17,4 +17,7 @@ router.post('/update', new TeacherController().update())
 /* 删除 */
 router.post('/delete', new TeacherController().del())
 
+/* 搜索建议 */
+router.post('/suggest', new TeacherController().suggest())
+
 module.exports = router

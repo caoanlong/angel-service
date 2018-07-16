@@ -116,6 +116,22 @@ class DoctorController extends BaseController {
             }
         }
     }
+    /**
+    * 搜索建议
+    */
+    suggest() {
+        return async ctx => {
+            const { keyword } = ctx.query
+            const where = {}
+            if (keyword) where['name'] = { $like: '%' + keyword + '%' }
+            try {
+                const doctors = await Doctor.findAll({ where })
+                ctx.body = this.responseSussess(doctors)
+            } catch (err) {
+                ctx.body = this.responseError(err)
+            }
+        }
+    }
 }
 
 module.exports = DoctorController

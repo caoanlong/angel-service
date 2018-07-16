@@ -15,7 +15,8 @@ const Member = sequelize.define('member', {
     // 姓名
     name: {
         type: Sequelize.STRING(32),
-        allowNull: false
+        allowNull: false,
+        defaultValue: ''
     },
     // 电话
     mobile: {

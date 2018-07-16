@@ -13,5 +13,9 @@ router.use(require('./doctor').routes())
 router.use(require('./teacher').routes())
 router.use(require('./lessonSet').routes())
 router.use(require('./platformProduct').routes())
+router.use(require('./member').routes())
+router.use(require('./lesson').routes())
+router.use(require('./order').routes())
+router.use(require('./attendance').routes())
 
 module.exports = router

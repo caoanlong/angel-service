@@ -16,6 +16,14 @@ const SmsCode = sequelize.define('smsCode', {
     mobile: {
         type: Sequelize.STRING(16),
         allowNull: false
+    },
+    // 创建时间
+    createTime: {
+        type: Sequelize.DATE
+    },
+    // 更新时间
+    updateTime: {
+        type: Sequelize.DATE
     }
 })
 

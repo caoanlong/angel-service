@@ -50,3 +50,26 @@ exports.getVerCode = (num) => {
 	}
 	return result
 }
+
+// 将1位数前面补0
+function oneToTwoNum(num) {
+	let number = 0
+	(num < 10) ? (number = '' + 0 + num) : (number = num)
+	return number
+}
+// 获取时间字符串数字
+exports.getTimeNum = () => {
+	let date = new Date()
+	let time = '' + date.getFullYear() 
+		+ oneToTwoNum(date.getMonth() + 1) 
+		+ oneToTwoNum(date.getDate()) 
+		+ oneToTwoNum(date.getHours()) 
+		+ oneToTwoNum(date.getMinutes()) 
+		+ oneToTwoNum(date.getSeconds())
+	return time
+}
+
+// 生成订单号(时间+随机数)
+exports.generateOrderNo = (num) => {
+	return getTimeNum() + getVerCode(num)
+}

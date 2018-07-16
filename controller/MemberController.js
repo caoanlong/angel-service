@@ -1,7 +1,10 @@
 const BaseController = require('./BaseController')
 const Member = require('../model/Member')
+const SmsCode = require('../model/SmsCode')
 const validator = require('validator')
 const { snowflake } = require('../utils')
+const { jwtConfig } = require('../config')
+const jwt = require('jsonwebtoken')
 
 class MemberController extends BaseController {
 	/**
@@ -115,6 +118,22 @@ class MemberController extends BaseController {
         }
     }
     /**
+	 * 搜索建议
+	 */
+    suggest() {
+        return async ctx => {
+            const { keyword } = ctx.query
+            const where = {}
+            if (keyword) where['name'] = { $like: '%' + keyword + '%' }
+            try {
+                const members = await Member.findAll({ where })
+                ctx.body = this.responseSussess(members)
+            } catch (err) {
+                ctx.body = this.responseError(err)
+            }
+        }
+    }
+    /**
 	 * 禁用
 	 */
     disable() {
@@ -122,7 +141,7 @@ class MemberController extends BaseController {
             const { memberId, isDisabled } = ctx.request.body
             try {
                 if (validator.isEmpty(memberId)) throw ('memberId不能为空！')
-                await Member.update({ isDisabled: isDisabled == 'true' ? true : false }, { where: { memberId } })
+                await Member.update({ isDisabled }, { where: { memberId } })
                 ctx.body = this.responseSussess()
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -153,6 +172,48 @@ class MemberController extends BaseController {
             try {
                 const data = { name, avatar, sex, age, remark }
                 await Member.update(data, { where: { memberId } })
+                ctx.body = this.responseSussess()
+            } catch (err) {
+                ctx.body = this.responseError(err)
+            }
+        }
+    }
+    /**
+	 * 登录
+	 */
+    login() {
+        return async ctx => {
+            const { mobile, vcode } = ctx.request.body
+            try {
+                if (validator.isEmpty(mobile)) throw ('手机号不能为空！')
+                if (validator.isEmpty(vcode)) throw ('验证码不能为空！')
+                const smsCode = await SmsCode.find({ where: { mobile, vcode } })
+                if (!smsCode) throw ('验证码错误！')
+                const currentTime = new Date().getTime()
+                const addTime = smsCode.updateTime
+                const time = 120 * 1000
+                if (currentTime - addTime > time) throw ('验证码已失效！')
+                let member = await Member.find({ where: { mobile } })
+                if (member) {
+                    if (member.isDisabled) throw ('账号已被禁用！')
+                } else {
+                    const memberId = snowflake.nextId()
+                    member = await Member.create({ memberId, mobile, createTime: new Date() })
+                }
+                const payLoad = {
+                    memberId: member.memberId,
+                    name: member.name,
+                    mobile: member.mobile,
+                    avatar: member.avatar,
+                    sex: member.sex,
+                    age: member.age,
+                    remark: member.remark,
+                    openId: member.openId,
+                    isDisabled: member.isDisabled,
+                    createTime: member.createTime,
+                }
+                const token = await jwt.sign(payLoad, jwtConfig.secret, jwtConfig.exp)
+                ctx.set({ 'X-Access-Token': token })
                 ctx.body = this.responseSussess()
             } catch (err) {
                 ctx.body = this.responseError(err)

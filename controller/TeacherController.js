@@ -116,6 +116,22 @@ class TeacherController extends BaseController {
             }
         }
     }
+    /**
+    * 搜索建议
+    */
+    suggest() {
+        return async ctx => {
+            const { keyword } = ctx.query
+            const where = {}
+            if (keyword) where['name'] = { $like: '%' + keyword + '%' }
+            try {
+                const teachers = await Teacher.findAll({ where })
+                ctx.body = this.responseSussess(teachers)
+            } catch (err) {
+                ctx.body = this.responseError(err)
+            }
+        }
+    }
 }
 
 module.exports = TeacherController

@@ -4,4 +4,6 @@ const InterceptorController = require('../../controller/InterceptorController')
 
 router.use(new InterceptorController().apiInterceptor())
 
+router.use(require('./auth').routes())
+
 module.exports = router
