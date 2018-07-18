@@ -1,7 +1,6 @@
 const BaseController = require('./BaseController')
 const Attendance = require('../model/Attendance')
 const Member = require('../model/Member')
-const Lesson = require('../model/Lesson')
 const validator = require('validator')
 const { snowflake } = require('../utils')
 

@@ -1,19 +1,20 @@
 const BaseController = require('./BaseController')
-const Doctor = require('../model/Doctor')
+const Person = require('../model/Person')
 const validator = require('validator')
 const { snowflake } = require('../utils')
 
-class DoctorController extends BaseController {
+class PersonController extends BaseController {
 	/**
 	 * 根据条件分页查询列表
 	 */
     findList() {
         return async ctx => {
-            let { pageIndex = 1, pageSize = 10, keyword, startTime, endTime } = ctx.query
+            let { pageIndex = 1, pageSize = 10, type, keyword, startTime, endTime } = ctx.query
             pageIndex = Math.max(Number(pageIndex), 1)
             pageSize = Number(pageSize)
             const offset = (pageIndex - 1) * pageSize
             const where = {}
+            if (type) where['type'] = type
             if (keyword) {
                 where['$or'] = {}
                 where['$or']['name'] = { $like: '%' + keyword + '%' }
@@ -23,11 +24,11 @@ class DoctorController extends BaseController {
             if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))
             if (endTime) where['createTime']['$lte'] = new Date(Number(endTime))
             try {
-                const doctors = await Doctor.findAndCountAll({
+                const persons = await Person.findAndCountAll({
                     where, offset, limit: pageSize,
                     order: [['createTime', 'DESC']]
                 })
-                ctx.body = this.responseSussess({ pageIndex, pageSize, count: doctors.count, rows: doctors.rows })
+                ctx.body = this.responseSussess({ pageIndex, pageSize, count: persons.count, rows: persons.rows })
             } catch (err) {
                 ctx.body = this.responseError(err)
             }
@@ -38,11 +39,11 @@ class DoctorController extends BaseController {
 	 */
     findById() {
         return async ctx => {
-            const { doctorId } = ctx.query
+            const { personId } = ctx.query
             try {
-                if (validator.isEmpty(doctorId)) throw ('doctorId不能为空！')
-                const doctor = await Doctor.findById(doctorId)
-                ctx.body = this.responseSussess(doctor)
+                if (validator.isEmpty(personId)) throw ('personId不能为空！')
+                const person = await Person.findById(personId)
+                ctx.body = this.responseSussess(person)
             } catch (err) {
                 ctx.body = this.responseError(err)
             }
@@ -54,13 +55,16 @@ class DoctorController extends BaseController {
     create() {
         return async ctx => {
             const userId = ctx.state.user.userId
-            const doctorId = snowflake.nextId()
-            const { name, mobile, avatar, remark } = ctx.request.body
+            const personId = snowflake.nextId()
+            const { type, name, mobile, avatar, sex, age, remark } = ctx.request.body
             const data = {
-                doctorId,
+                personId,
+                type,
                 name,
                 mobile,
                 avatar,
+                sex,
+                age,
                 remark,
                 createBy: userId,
                 createTime: new Date(),
@@ -70,7 +74,7 @@ class DoctorController extends BaseController {
             try {
                 if (validator.isEmpty(name)) throw ('姓名不能为空！')
                 if (validator.isEmpty(mobile)) throw ('手机号不能为空！')
-                await Doctor.create(data)
+                await Person.create(data)
                 ctx.body = this.responseSussess()
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -83,18 +87,20 @@ class DoctorController extends BaseController {
     update() {
         return async ctx => {
             const userId = ctx.state.user.userId
-            const { doctorId, name, mobile, avatar, remark } = ctx.request.body
+            const { personId, name, mobile, avatar, sex, age, remark } = ctx.request.body
             try {
-                if (validator.isEmpty(doctorId)) throw ('doctorId不能为空！')
+                if (validator.isEmpty(personId)) throw ('personId不能为空！')
                 const data = {
                     name,
                     mobile,
                     avatar,
+                    sex,
+                    age,
                     remark,
                     updateBy: userId,
                     updateTime: new Date()
                 }
-                await Doctor.update(data, { where: { doctorId } })
+                await Person.update(data, { where: { personId } })
                 ctx.body = this.responseSussess()
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -109,7 +115,7 @@ class DoctorController extends BaseController {
             const { ids } = ctx.request.body
             try {
                 if (!ids || ids.length == 0) throw ('ids不能为空！')
-                await Doctor.destroy({ where: { doctorId: { $in: ids } } })
+                await Person.destroy({ where: { personId: { $in: ids } } })
                 ctx.body = this.responseSussess()
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -121,12 +127,13 @@ class DoctorController extends BaseController {
     */
     suggest() {
         return async ctx => {
-            const { keyword } = ctx.query
+            const { type, keyword } = ctx.query
             const where = {}
+            if (type) where['type'] = type
             if (keyword) where['name'] = { $like: '%' + keyword + '%' }
             try {
-                const doctors = await Doctor.findAll({ where })
-                ctx.body = this.responseSussess(doctors)
+                const persons = await Person.findAll({ where })
+                ctx.body = this.responseSussess(persons)
             } catch (err) {
                 ctx.body = this.responseError(err)
             }
@@ -134,4 +141,4 @@ class DoctorController extends BaseController {
     }
 }
 
-module.exports = DoctorController
+module.exports = PersonController

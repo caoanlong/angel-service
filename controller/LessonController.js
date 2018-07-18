@@ -1,6 +1,6 @@
 const BaseController = require('./BaseController')
 const Lesson = require('../model/Lesson')
-const LessonSet = require('../model/LessonSet')
+const Product = require('../model/Product')
 const Member = require('../model/Member')
 const SysDict = require('../model/SysDict')
 const validator = require('validator')
@@ -29,12 +29,12 @@ class LessonController extends BaseController {
                     if (members && members.length > 0) {
                         where['memberId'] = { $in: members.map(item => item.memberId) }
                     } else {
-                        const lessonSets = await LessonSet.findAll({
+                        const products = await Product.findAll({
                             where: { name: { $like: '%' + keyword + '%' } },
-                            attributes: ['lessonSetId']
+                            attributes: ['productId']
                         })
-                        if (lessonSets && lessonSets.length > 0) {
-                            where['lessonSetId'] = { $in: lessonSets.map(item => item.lessonSetId) }
+                        if (products && products.length > 0) {
+                            where['lessonSetId'] = { $in: products.map(item => item.productId) }
                         }
                     }
                 }
@@ -44,8 +44,8 @@ class LessonController extends BaseController {
                     include: [
                         { model: Member, as: 'member' },
                         { 
-                            model: LessonSet, as: 'lessonSet', 
-                            include: [{ model: SysDict, as: 'type' }] 
+                            model: Product, as: 'product',
+                            include: [{ model: SysDict, as: 'label' }] 
                         }
                     ]
                 })
@@ -67,8 +67,8 @@ class LessonController extends BaseController {
                     include: [
                         { model: Member, as: 'member' },
                         {
-                            model: LessonSet, as: 'lessonSet',
-                            include: [{ model: SysDict, as: 'type' }]
+                            model: Product, as: 'product',
+                            include: [{ model: SysDict, as: 'label' }]
                         }
                     ]
                 })

@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const sequelize = require('../config/sequelize')
 
 const Member = require('./Member')
-const Doctor = require('./Doctor')
+const Person = require('./Person')
 const SysDict = require('./SysDict')
 
 /* 健康报告 */
@@ -61,7 +61,7 @@ const HealthRecord = sequelize.define('healthRecord', {
 })
 
 HealthRecord.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
-HealthRecord.belongsTo(Doctor, { as: 'doctor', foreignKey: 'doctorId' })
+HealthRecord.belongsTo(Person, { as: 'doctor', foreignKey: 'doctorId' })
 HealthRecord.belongsTo(SysDict, { as: 'type', foreignKey: 'typeId' })
 
 module.exports = HealthRecord

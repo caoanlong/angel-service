@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const sequelize = require('../config/sequelize')
 
 const Member = require('./Member')
-const Teacher = require('./Teacher')
+const Person = require('./Person')
 
 /* 老师建议 */
 const TeacherAdvice = sequelize.define('teacherAdvice', {
@@ -46,6 +46,6 @@ const TeacherAdvice = sequelize.define('teacherAdvice', {
 })
 
 TeacherAdvice.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
-TeacherAdvice.belongsTo(Teacher, { as: 'teacher', foreignKey: 'teacherId' })
+TeacherAdvice.belongsTo(Person, { as: 'teacher', foreignKey: 'teacherId' })
 
 module.exports = TeacherAdvice

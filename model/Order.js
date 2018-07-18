@@ -2,8 +2,7 @@ const Sequelize = require('sequelize')
 const sequelize = require('../config/sequelize')
 
 const Member = require('./Member')
-const LessonSet = require('./LessonSet')
-const PlatformProduct = require('./PlatformProduct')
+const Product = require('./Product')
 
 /* 订单 */
 const Order = sequelize.define('orders', {
@@ -22,10 +21,6 @@ const Order = sequelize.define('orders', {
     orderNo: {
         type: Sequelize.STRING(32),
         allowNull: false
-    },
-    // 课程ID
-    lessonSetId: {
-        type: Sequelize.BIGINT(32)
     },
     // 产品ID
     productId: {
@@ -47,7 +42,6 @@ const Order = sequelize.define('orders', {
 })
 
 Order.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
-Order.belongsTo(LessonSet, { as: 'lessonSet', foreignKey: 'lessonSetId' })
-Order.belongsTo(PlatformProduct, { as: 'product', foreignKey: 'productId' })
+Order.belongsTo(Product, { as: 'product', foreignKey: 'productId' })
 
 module.exports = Order

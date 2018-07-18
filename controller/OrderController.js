@@ -2,8 +2,7 @@ const BaseController = require('./BaseController')
 const Order = require('../model/Order')
 const Member = require('../model/Member')
 const Lesson = require('../model/Lesson')
-const LessonSet = require('../model/LessonSet')
-const PlatformProduct = require('../model/PlatformProduct')
+const Product = require('../model/Product')
 const validator = require('validator')
 const { snowflake, generateOrderNo } = require('../utils')
 
@@ -31,20 +30,12 @@ class OrderController extends BaseController {
                     if (members && members.length > 0) {
                         where['memberId'] = { $in: members.map(item => item.memberId) }
                     } else {
-                        const lessonSets = await LessonSet.findAll({
+                        const products = await Product.findAll({
                             where: { name: { $like: '%' + keyword + '%' } },
-                            attributes: ['lessonSetId']
+                            attributes: ['productId']
                         })
-                        if (lessonSets && lessonSets.length > 0) {
-                            where['lessonSetId'] = { $in: lessonSets.map(item => item.lessonSetId) }
-                        } else {
-                            const products = await PlatformProduct.findAll({
-                                where: { name: { $like: '%' + keyword + '%' } },
-                                attributes: ['platformProductId']
-                            })
-                            if (products && products.length > 0) {
-                                where['productId'] = { $in: products.map(item => item.platformProductId) }
-                            }
+                        if (products && products.length > 0) {
+                            where['productId'] = { $in: products.map(item => item.productId) }
                         }
                     }
                 }
@@ -52,8 +43,7 @@ class OrderController extends BaseController {
                     where, offset, limit: pageSize,
                     include: [
                         { model: Member, as: 'member' },
-                        { model: LessonSet, as: 'lessonSet' },
-                        { model: PlatformProduct, as: 'product' }
+                        { model: Product, as: 'product' }
                     ],
                     order: [['createTime', 'DESC']]
                 })
@@ -74,9 +64,8 @@ class OrderController extends BaseController {
                 const order = await Order.findById(orderId, {
                     include: [
                         { model: Member, as: 'member' },
-                        { model: LessonSet, as: 'lessonSet' },
-                        { model: PlatformProduct, as: 'product' }
-                    ]
+                        { model: Product, as: 'product' }
+                    ],
                 })
                 ctx.body = this.responseSussess(order)
             } catch (err) {
@@ -92,29 +81,25 @@ class OrderController extends BaseController {
             const memberId = ctx.state.member.memberId
             const orderId = snowflake.nextId()
             const orderNo = generateOrderNo(4)
-            const { lessonSetId = null, productId = null, totalPrice } = ctx.request.body
+            const { productId } = ctx.request.body
             try {
-                if (lessonSetId) {
-                    const lessonSet = await LessonSet.findById(lessonSetId)
-                    totalPrice = lessonSet.price
+                if (validator.isEmpty(productId)) throw ('productId不能为空！')
+                const product = await Product.findById(productId)
+                if (product.type == 'lesson') {
                     const lessonId = snowflake.nextId()
                     await Lesson.create({
                         lessonId,
                         memberId,
-                        lessonSetId,
-                        totalNum: lessonSet.num,
-                        validityDate: new Date(new Date().getTime() + lessonSet.validityDate * 24 * 3600000)
+                        productId,
+                        totalNum: product.lessonNum,
+                        validityDate: new Date(new Date().getTime() + product.validDate * 24 * 3600000)
                     })
                 }
-                if (productId) {
-                    const product = await PlatformProduct.findById(productId)
-                    totalPrice = product.price
-                }
+                const totalPrice = product.price
                 const data = {
                     orderId,
                     memberId,
                     orderNo,
-                    lessonSetId,
                     productId,
                     totalPrice,
                     status: 'success',

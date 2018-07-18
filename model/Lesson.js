@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const sequelize = require('../config/sequelize')
 
 const Member = require('./Member')
-const LessonSet = require('./LessonSet')
+const Product = require('./Product')
 
 /* 会员课程 */
 const Lesson = sequelize.define('lesson', {
@@ -18,7 +18,7 @@ const Lesson = sequelize.define('lesson', {
         allowNull: false
     },
     // 课程ID
-    lessonSetId: {
+    productId: {
         type: Sequelize.BIGINT(32),
         allowNull: false
     },
@@ -45,6 +45,6 @@ const Lesson = sequelize.define('lesson', {
 })
 
 Lesson.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
-Lesson.belongsTo(LessonSet, { as: 'lessonSet', foreignKey: 'lessonSetId' })
+Lesson.belongsTo(Product, { as: 'product', foreignKey: 'productId' })
 
 module.exports = Lesson
