@@ -18,6 +18,6 @@ router.post('/update', new PersonController().update())
 router.post('/delete', new PersonController().del())
 
 /* 搜索建议 */
-router.post('/suggest', new PersonController().suggest())
+router.get('/suggest', new PersonController().suggest())
 
 module.exports = router

@@ -8,7 +8,7 @@ const SysDict = require('./SysDict')
 /* 健康报告 */
 const HealthRecord = sequelize.define('healthRecord', {
     // 健康报告ID
-    HealthRecordId: {
+    healthRecordId: {
         type: Sequelize.BIGINT(32),
         primaryKey: true,
         allowNull: false
@@ -23,8 +23,8 @@ const HealthRecord = sequelize.define('healthRecord', {
         type: Sequelize.BIGINT(32),
         allowNull: false
     },
-    // 医生ID
-    doctorId: {
+    // 人员ID
+    personId: {
         type: Sequelize.BIGINT(32),
         allowNull: false
     },
@@ -61,7 +61,7 @@ const HealthRecord = sequelize.define('healthRecord', {
 })
 
 HealthRecord.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
-HealthRecord.belongsTo(Person, { as: 'doctor', foreignKey: 'doctorId' })
+HealthRecord.belongsTo(Person, { as: 'person', foreignKey: 'personId' })
 HealthRecord.belongsTo(SysDict, { as: 'type', foreignKey: 'typeId' })
 
 module.exports = HealthRecord

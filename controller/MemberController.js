@@ -43,7 +43,7 @@ class MemberController extends BaseController {
         return async ctx => {
             const { memberId } = ctx.query
             try {
-                if (validator.isEmpty(memberId)) throw ('memberId不能为空！')
+                if (!memberId) throw ('memberId不能为空！')
                 const member = await Member.findById(memberId)
                 ctx.body = this.responseSussess(member)
             } catch (err) {
@@ -70,8 +70,8 @@ class MemberController extends BaseController {
                 createTime: new Date()
             }
             try {
-                if (validator.isEmpty(name)) throw ('姓名不能为空！')
-                if (validator.isEmpty(mobile)) throw ('手机号不能为空！')
+                if (!name) throw ('姓名不能为空！')
+                if (!mobile) throw ('手机号不能为空！')
                 await Member.create(data)
                 ctx.body = this.responseSussess()
             } catch (err) {
@@ -86,7 +86,7 @@ class MemberController extends BaseController {
         return async ctx => {
             const { memberId, name, mobile, avatar, sex, age, remark } = ctx.request.body
             try {
-                if (validator.isEmpty(memberId)) throw ('memberId不能为空！')
+                if (!memberId) throw ('memberId不能为空！')
                 const data = {
                     name,
                     mobile,
@@ -140,7 +140,7 @@ class MemberController extends BaseController {
         return async ctx => {
             const { memberId, isDisabled } = ctx.request.body
             try {
-                if (validator.isEmpty(memberId)) throw ('memberId不能为空！')
+                if (!memberId) throw ('memberId不能为空！')
                 await Member.update({ isDisabled }, { where: { memberId } })
                 ctx.body = this.responseSussess()
             } catch (err) {
@@ -185,8 +185,8 @@ class MemberController extends BaseController {
         return async ctx => {
             const { mobile, vcode } = ctx.request.body
             try {
-                if (validator.isEmpty(mobile)) throw ('手机号不能为空！')
-                if (validator.isEmpty(vcode)) throw ('验证码不能为空！')
+                if (!mobile) throw ('手机号不能为空！')
+                if (!vcode) throw ('验证码不能为空！')
                 const smsCode = await SmsCode.find({ where: { mobile, vcode } })
                 if (!smsCode) throw ('验证码错误！')
                 const currentTime = new Date().getTime()

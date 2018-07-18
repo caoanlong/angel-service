@@ -16,6 +16,11 @@ const LessonPhoto = sequelize.define('lessonPhoto', {
         type: Sequelize.BIGINT(32),
         allowNull: false
     },
+    // 标题
+    title: {
+        type: Sequelize.STRING(100),
+        allowNull: false
+    },
     // 照片  
     photos: {
         type: Sequelize.STRING(1024),

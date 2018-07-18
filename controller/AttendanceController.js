@@ -53,7 +53,7 @@ class AttendanceController extends BaseController {
         return async ctx => {
             const { attendanceId } = ctx.query
             try {
-                if (validator.isEmpty(attendanceId)) throw ('attendanceId不能为空！')
+                if (!attendanceId) throw ('attendanceId不能为空！')
                 const attendance = await Attendance.findById(attendanceId, {
                     include: [{ model: Member, as: 'member' }]
                 })

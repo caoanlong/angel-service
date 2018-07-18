@@ -34,7 +34,7 @@ class SysDictController extends BaseController {
 		return async ctx => {
 			const { dictId } = ctx.query
 			try {
-				if (validator.isEmpty(dictId)) throw('dictId不能为空！')
+				if (!dictId) throw('dictId不能为空！')
 				const sysDict = await SysDict.findById(dictId)
 				ctx.body = this.responseSussess(sysDict)
 			} catch (err) {
@@ -63,9 +63,9 @@ class SysDictController extends BaseController {
 				updateTime: new Date() 
 			}
 			try {
-				if (validator.isEmpty(key)) throw('键名不能为空！')
-				if (validator.isEmpty(value)) throw('值不能为空！')
-				if (validator.isEmpty(type)) throw('类型不能为空！')
+				if (!key) throw('键名不能为空！')
+				if (!value) throw('值不能为空！')
+				if (!type) throw('类型不能为空！')
 				await SysDict.create(data)
 				ctx.body = this.responseSussess()
 			} catch (err) {
@@ -81,7 +81,7 @@ class SysDictController extends BaseController {
 			const userId = ctx.state.user.userId
 			const { dictId, key, value, type, sort, description } = ctx.request.body
 			try {
-				if (validator.isEmpty(dictId)) throw('dictId不能为空！')
+				if (!dictId) throw('dictId不能为空！')
 				const data = { 
 					dictId, 
 					key,

@@ -4,9 +4,9 @@ const sequelize = require('../config/sequelize')
 const Member = require('./Member')
 const Person = require('./Person')
 
-/* 老师建议 */
+/* 天使留言 */
 const AngelRemark = sequelize.define('angelRemark', {
-    // 老师建议ID
+    // 天使留言ID
     angelRemarkId: {
         type: Sequelize.BIGINT(32),
         primaryKey: true,
@@ -17,8 +17,8 @@ const AngelRemark = sequelize.define('angelRemark', {
         type: Sequelize.BIGINT(32),
         allowNull: false
     },
-    // 老师ID
-    teacherId: {
+    // 人员ID
+    personId: {
         type: Sequelize.BIGINT(32),
         allowNull: false
     },
@@ -30,10 +30,14 @@ const AngelRemark = sequelize.define('angelRemark', {
     // 创建时间
     createTime: {
         type: Sequelize.DATE
+    },
+    // 修改时间
+    updateTime: {
+        type: Sequelize.DATE
     }
 })
 
 AngelRemark.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
-AngelRemark.belongsTo(Person, { as: 'teacher', foreignKey: 'teacherId' })
+AngelRemark.belongsTo(Person, { as: 'person', foreignKey: 'personId' })
 
 module.exports = AngelRemark

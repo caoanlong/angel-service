@@ -1,34 +1,41 @@
 const BaseController = require('./BaseController')
-const Person = require('../model/Person')
+const LessonPhoto = require('../model/LessonPhoto')
+const Member = require('../model/Member')
 const validator = require('validator')
 const { snowflake } = require('../utils')
 
-class PersonController extends BaseController {
+class LessonPhotoController extends BaseController {
 	/**
 	 * 根据条件分页查询列表
 	 */
     findList() {
         return async ctx => {
-            let { pageIndex = 1, pageSize = 10, type, keyword, startTime, endTime } = ctx.query
+            let { pageIndex = 1, pageSize = 10, keyword, startTime, endTime } = ctx.query
             pageIndex = Math.max(Number(pageIndex), 1)
             pageSize = Number(pageSize)
             const offset = (pageIndex - 1) * pageSize
             const where = {}
-            if (type) where['type'] = type
-            if (keyword) {
-                where['$or'] = {}
-                where['$or']['name'] = { $like: '%' + keyword + '%' }
-                where['$or']['mobile'] = { $like: '%' + keyword + '%' }
-            }
             if (startTime || endTime) where['createTime'] = {}
             if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))
             if (endTime) where['createTime']['$lte'] = new Date(Number(endTime))
             try {
-                const persons = await Person.findAndCountAll({
+                if (keyword) {
+                    const members = await Member.findAll({
+                        where: { name: { $like: '%' + keyword + '%' } },
+                        attributes: ['memberId']
+                    })
+                    if (members && members.length > 0) {
+                        where['memberId'] = { $in: members.map(item => item.memberId) }
+                    } else {
+                        where['title'] = { $like: '%' + keyword + '%' }
+                    }
+                }
+                const lessonPhotos = await LessonPhoto.findAndCountAll({
                     where, offset, limit: pageSize,
+                    include: [{ model: Member, as: 'member' }],
                     order: [['createTime', 'DESC']]
                 })
-                ctx.body = this.responseSussess({ pageIndex, pageSize, count: persons.count, rows: persons.rows })
+                ctx.body = this.responseSussess({ pageIndex, pageSize, count: lessonPhotos.count, rows: lessonPhotos.rows })
             } catch (err) {
                 ctx.body = this.responseError(err)
             }
@@ -39,11 +46,13 @@ class PersonController extends BaseController {
 	 */
     findById() {
         return async ctx => {
-            const { personId } = ctx.query
+            const { lessonPhotoId } = ctx.query
             try {
-                if (!personId) throw ('personId不能为空！')
-                const person = await Person.findById(personId)
-                ctx.body = this.responseSussess(person)
+                if (!lessonPhotoId) throw ('lessonPhotoId不能为空！')
+                const lessonPhoto = await LessonPhoto.findById(lessonPhotoId, {
+                    include: [{ model: Member, as: 'member' }]
+                })
+                ctx.body = this.responseSussess(lessonPhoto)
             } catch (err) {
                 ctx.body = this.responseError(err)
             }
@@ -55,26 +64,22 @@ class PersonController extends BaseController {
     create() {
         return async ctx => {
             const userId = ctx.state.user.userId
-            const personId = snowflake.nextId()
-            const { type, name, mobile, avatar, sex, age, remark } = ctx.request.body
+            const lessonPhotoId = snowflake.nextId()
+            const { memberId, title, photos } = ctx.request.body
             const data = {
-                personId,
-                type,
-                name,
-                mobile,
-                avatar,
-                sex,
-                age,
-                remark,
+                lessonPhotoId,
+                memberId,
+                title,
+                photos,
                 createBy: userId,
                 createTime: new Date(),
                 updateBy: userId,
                 updateTime: new Date()
             }
             try {
-                if (!name) throw ('姓名不能为空！')
-                if (!mobile) throw ('手机号不能为空！')
-                await Person.create(data)
+                if (!memberId) throw ('memberId不能为空！')
+                if (!photos) throw ('照片不能为空！')
+                await LessonPhoto.create(data)
                 ctx.body = this.responseSussess()
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -87,20 +92,17 @@ class PersonController extends BaseController {
     update() {
         return async ctx => {
             const userId = ctx.state.user.userId
-            const { personId, name, mobile, avatar, sex, age, remark } = ctx.request.body
+            const { lessonPhotoId, memberId, title, photos } = ctx.request.body
             try {
-                if (!personId) throw ('personId不能为空！')
+                if (!lessonPhotoId) throw ('lessonPhotoId不能为空！')
                 const data = {
-                    name,
-                    mobile,
-                    avatar,
-                    sex,
-                    age,
-                    remark,
+                    memberId,
+                    title,
+                    photos,
                     updateBy: userId,
                     updateTime: new Date()
                 }
-                await Person.update(data, { where: { personId } })
+                await LessonPhoto.update(data, { where: { lessonPhotoId } })
                 ctx.body = this.responseSussess()
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -115,25 +117,8 @@ class PersonController extends BaseController {
             const { ids } = ctx.request.body
             try {
                 if (!ids || ids.length == 0) throw ('ids不能为空！')
-                await Person.destroy({ where: { personId: { $in: ids } } })
+                await LessonPhoto.destroy({ where: { lessonPhotoId: { $in: ids } } })
                 ctx.body = this.responseSussess()
-            } catch (err) {
-                ctx.body = this.responseError(err)
-            }
-        }
-    }
-    /**
-    * 搜索建议
-    */
-    suggest() {
-        return async ctx => {
-            const { type, keyword } = ctx.query
-            const where = {}
-            if (type) where['type'] = type
-            if (keyword) where['name'] = { $like: '%' + keyword + '%' }
-            try {
-                const persons = await Person.findAll({ where })
-                ctx.body = this.responseSussess(persons)
             } catch (err) {
                 ctx.body = this.responseError(err)
             }
@@ -141,4 +126,4 @@ class PersonController extends BaseController {
     }
 }
 
-module.exports = PersonController
+module.exports = LessonPhotoController

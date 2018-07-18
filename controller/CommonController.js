@@ -10,9 +10,10 @@ class CommonController extends BaseController {
             try {
                 if (validator.isEmpty(mobile)) throw ('手机号不能为空！')
                 const smsCode = await SmsCode.find({ where: { mobile } })
+                const now = new Date()
+                const time = 5 * 1000
+                if (now.getTime() - smsCode.updateTime < time) throw ('发送太频繁！')
                 const code = getVerCode(6)
-                console.log(code)
-                const now = new Date().getTime()
                 if (smsCode) {
                     await SmsCode.update({ code, updateTime: now }, { where: { mobile } })
                 } else {

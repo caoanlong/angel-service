@@ -62,7 +62,7 @@ class LessonController extends BaseController {
         return async ctx => {
             const { lessonId } = ctx.query
             try {
-                if (validator.isEmpty(lessonId)) throw ('lessonId不能为空！')
+                if (!lessonId) throw ('lessonId不能为空！')
                 const lesson = await Lesson.findById(lessonId, {
                     include: [
                         { model: Member, as: 'member' },

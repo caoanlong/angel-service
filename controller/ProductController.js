@@ -43,7 +43,7 @@ class ProductController extends BaseController {
         return async ctx => {
             const { productId } = ctx.query
             try {
-                if (validator.isEmpty(productId)) throw ('productId不能为空！')
+                if (!productId) throw ('productId不能为空！')
                 const product = await Product.findById(productId, {
                     include: [
                         { model: SysDict, as: 'expressType' },
@@ -82,9 +82,9 @@ class ProductController extends BaseController {
                 updateTime: new Date()
             }
             try {
-                if (validator.isEmpty(type)) throw ('类型不能为空！')
-                if (validator.isEmpty(name)) throw ('名称不能为空！')
-                if (validator.isEmpty(price)) throw ('价格不能为空！')
+                if (!type) throw ('类型不能为空！')
+                if (!name) throw ('名称不能为空！')
+                if (!price) throw ('价格不能为空！')
                 await Product.create(data)
                 ctx.body = this.responseSussess()
             } catch (err) {
@@ -100,7 +100,7 @@ class ProductController extends BaseController {
             const userId = ctx.state.user.userId
             const { productId, name, labelId, image, freight, expressTypeId, lessonNum, price, validDate, remark } = ctx.request.body
             try {
-                if (validator.isEmpty(productId)) throw ('productId不能为空！')
+                if (!productId) throw ('productId不能为空！')
                 const data = {
                     productId,
                     name,

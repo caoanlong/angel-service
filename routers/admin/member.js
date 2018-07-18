@@ -21,6 +21,6 @@ router.post('/delete', new MemberController().del())
 router.post('/disable', new MemberController().disable())
 
 /* 搜索建议 */
-router.post('/suggest', new MemberController().suggest())
+router.get('/suggest', new MemberController().suggest())
 
 module.exports = router

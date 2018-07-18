@@ -39,7 +39,7 @@ class SysRoleController extends BaseController {
 		return async ctx => {
 			const { roleId } = ctx.query
 			try {
-				if (validator.isEmpty(roleId)) throw('roleId不能为空！')
+				if (!roleId) throw('roleId不能为空！')
 				const sysRole = await SysRole.findById(roleId)
 				ctx.body = this.responseSussess(sysRole)
 			} catch (err) {
@@ -64,7 +64,7 @@ class SysRoleController extends BaseController {
 				updateTime: new Date() 
 			}
 			try {
-				if (validator.isEmpty(name)) throw('角色名不能为空！')
+				if (!name) throw('角色名不能为空！')
 				await SysRole.create(data)
 				ctx.body = this.responseSussess()
 			} catch (err) {
@@ -80,7 +80,7 @@ class SysRoleController extends BaseController {
 			const userId = ctx.state.user.userId
 			const { roleId, name } = ctx.request.body
 			try {
-				if (validator.isEmpty(roleId)) throw('roleId不能为空！')
+				if (!roleId) throw('roleId不能为空！')
 				const data = {
 					name, 
 					updateBy: userId, 
@@ -117,7 +117,7 @@ class SysRoleController extends BaseController {
 		return async ctx => {
 			const { roleId } = ctx.query
 			try {
-				if (validator.isEmpty(roleId)) throw('roleId不能为空！')
+				if (!roleId) throw('roleId不能为空！')
 				const menus = await SysMenu.findAll()
 				const menuList = await menusTree(menus)
 				const sysRole = await SysRole.findById(roleId, {
@@ -139,7 +139,7 @@ class SysRoleController extends BaseController {
 			const { roleId, menuIds = [] } = ctx.request.body
 			const roleMenus = []
 			try {
-                if (validator.isEmpty(roleId)) throw('roleId不能为空！')
+                if (!roleId) throw('roleId不能为空！')
                 await SysRoleMenu.destroy({ where: { roleId } })
 				const sysMenus = await SysMenu.findAll({
 					where: { menuId: { $in: menuIds}}

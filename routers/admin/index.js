@@ -15,5 +15,9 @@ router.use(require('./member').routes())
 router.use(require('./lesson').routes())
 router.use(require('./order').routes())
 router.use(require('./attendance').routes())
+router.use(require('./angelRemark').routes())
+router.use(require('./healthRecord').routes())
+router.use(require('./lessonPhoto').routes())
+router.use(require('./teacherAdvice').routes())
 
 module.exports = router

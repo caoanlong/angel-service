@@ -60,7 +60,7 @@ class OrderController extends BaseController {
         return async ctx => {
             const { orderId } = ctx.query
             try {
-                if (validator.isEmpty(orderId)) throw ('orderId不能为空！')
+                if (!orderId) throw ('orderId不能为空！')
                 const order = await Order.findById(orderId, {
                     include: [
                         { model: Member, as: 'member' },
@@ -83,7 +83,7 @@ class OrderController extends BaseController {
             const orderNo = generateOrderNo(4)
             const { productId } = ctx.request.body
             try {
-                if (validator.isEmpty(productId)) throw ('productId不能为空！')
+                if (!productId) throw ('productId不能为空！')
                 const product = await Product.findById(productId)
                 if (product.type == 'lesson') {
                     const lessonId = snowflake.nextId()

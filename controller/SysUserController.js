@@ -51,7 +51,7 @@ class SysUserController extends BaseController {
 		return async ctx => {
 			const { userId } = ctx.query
 			try {
-				if (validator.isEmpty(userId)) throw('userId不能为空！')
+				if (!userId) throw('userId不能为空！')
 				const sysUser = await SysUser.findById(userId, {
                     include: { model: SysRole, as: 'role' }
                 })
@@ -100,8 +100,8 @@ class SysUserController extends BaseController {
 				updateTime: new Date() 
 			}
 			try {
-				if (validator.isEmpty(name)) throw('姓名不能为空！')
-				if (validator.isEmpty(password)) throw('密码不能为空！')
+				if (!name) throw('姓名不能为空！')
+				if (!password) throw('密码不能为空！')
 				await SysUser.create(data)
 				ctx.body = this.responseSussess()
 			} catch (err) {
@@ -117,7 +117,7 @@ class SysUserController extends BaseController {
 			const ctxUserId = ctx.state.user.userId
 			const { userId, name, mobile, avatar, password, roleId, isDisabled } = ctx.request.body
 			try {
-				if (validator.isEmpty(userId)) throw('userId不能为空！')
+				if (!userId) throw('userId不能为空！')
 				const data = {
 					name, 
 					mobile, 
@@ -218,8 +218,8 @@ class SysUserController extends BaseController {
 			const { name, password } = ctx.request.body
 			const passwordHash = generatePassword(password)
 			try {
-				if (validator.isEmpty(name)) throw('用户名不能为空！')
-				if (validator.isEmpty(password)) throw('密码不能为空！')
+				if (!name) throw('用户名不能为空！')
+				if (!password) throw('密码不能为空！')
 				const sysUser = await SysUser.find({ where: { name } })
 				if (!sysUser) throw ('用户不存在！')
 				if (sysUser.password != passwordHash) throw ('密码不正确！')

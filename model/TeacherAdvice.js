@@ -18,7 +18,7 @@ const TeacherAdvice = sequelize.define('teacherAdvice', {
         allowNull: false
     },
     // 老师ID
-    teacherId: {
+    personId: {
         type: Sequelize.BIGINT(32),
         allowNull: false
     },
@@ -46,6 +46,6 @@ const TeacherAdvice = sequelize.define('teacherAdvice', {
 })
 
 TeacherAdvice.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
-TeacherAdvice.belongsTo(Person, { as: 'teacher', foreignKey: 'teacherId' })
+TeacherAdvice.belongsTo(Person, { as: 'person', foreignKey: 'personId' })
 
 module.exports = TeacherAdvice

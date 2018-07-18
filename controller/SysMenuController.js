@@ -47,7 +47,7 @@ class SysMenuController extends BaseController {
         return async ctx => {
             const { menuId } = ctx.query
             try {
-                if (validator.isEmpty(menuId)) throw('menuId不能为空！')
+                if (!menuId) throw('menuId不能为空！')
                 const sysMenu = await SysMenu.findById(menuId)
                 ctx.body = this.responseSussess(sysMenu)
             } catch (err) {
@@ -78,9 +78,9 @@ class SysMenuController extends BaseController {
                 updateTime: new Date() 
             }
             try {
-                if (validator.isEmpty(name)) throw('菜单名不能为空！')
-                if (validator.isEmpty(routeName)) throw('菜单路由名不能为空！')
-                if (validator.isEmpty(path)) throw('菜单路径不能为空！')
+                if (!name) throw('菜单名不能为空！')
+                if (!routeName) throw('菜单路由名不能为空！')
+                if (!path) throw('菜单路径不能为空！')
                 const roleMenus = []
                 for (let i = 0; i < sysRoles.length; i++) {
                 	roleMenus.push({ menuId, roleId: sysRoles[i] })
@@ -112,7 +112,7 @@ class SysMenuController extends BaseController {
                 updateTime: new Date() 
             }
             try {
-                if (validator.isEmpty(menuId)) throw('menuId不能为空！')
+                if (!menuId) throw('menuId不能为空！')
                 const roleMenus = []
                 for (let i = 0; i < sysRoles.length; i++) {
                     roleMenus.push({ menuId, roleId: sysRoles[i] })
@@ -133,7 +133,7 @@ class SysMenuController extends BaseController {
         return async ctx => {
             const { menuId } = ctx.request.body
             try {
-                if (validator.isEmpty(menuId)) throw('menuId不能为空！')
+                if (!menuId) throw('menuId不能为空！')
                 await SysRoleMenu.destroy({ where: { menuId } })
                 await SysMenu.destroy({ where: { menuPid: menuId } })
                 await SysMenu.destroy({ where: { menuId } })
