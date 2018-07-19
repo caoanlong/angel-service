@@ -42,7 +42,7 @@ exports.generatePassword = (password) => {
 	return key.toString('hex')
 }
 
-exports.getVerCode = (num) => {
+function getVerCode (num) {
 	let result = ''
 	for (let i = 0; i < num; i++) {
 		let ran = Math.floor(Math.random() * 10)
@@ -50,15 +50,20 @@ exports.getVerCode = (num) => {
 	}
 	return result
 }
+exports.getVerCode = getVerCode
 
 // 将1位数前面补0
 function oneToTwoNum(num) {
 	let number = 0
-	(num < 10) ? (number = '' + 0 + num) : (number = num)
+	if (num < 10) {
+		number = '0' + num
+	} else {
+		number = num
+	}
 	return number
 }
 // 获取时间字符串数字
-exports.getTimeNum = () => {
+function getTimeNum () {
 	let date = new Date()
 	let time = '' + date.getFullYear() 
 		+ oneToTwoNum(date.getMonth() + 1) 

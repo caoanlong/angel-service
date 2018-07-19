@@ -2,6 +2,7 @@ const BaseController = require('./BaseController')
 const SysUser = require('../model/SysUser')
 const SysRole = require('../model/SysRole')
 const SysMenu = require('../model/SysMenu')
+const SysStore = require('../model/SysStore')
 const validator = require('validator')
 const { snowflake, generatePassword, menusTree } = require('../utils')
 const { jwtConfig } = require('../config')
@@ -35,7 +36,10 @@ class SysUserController extends BaseController {
 			try {
 				const sysUsers = await SysUser.findAndCountAll({ 
 					where, offset, limit: pageSize, 
-					include: [ { model: SysRole, as: 'role' } ], 
+					include: [ 
+						{ model: SysRole, as: 'role' },
+						{ model: SysStore, as: 'store' }
+					], 
 					order: [ ['createTime', 'DESC'] ] 
 				})
 				ctx.body = this.responseSussess({ pageIndex, pageSize, count: sysUsers.count, rows: sysUsers.rows })
@@ -53,7 +57,10 @@ class SysUserController extends BaseController {
 			try {
 				if (!userId) throw('userId不能为空！')
 				const sysUser = await SysUser.findById(userId, {
-                    include: { model: SysRole, as: 'role' }
+                    include: [ 
+						{ model: SysRole, as: 'role' },
+						{ model: SysStore, as: 'store' }
+					],
                 })
 				sysUser.password = null
 				ctx.body = this.responseSussess(sysUser)
@@ -84,7 +91,7 @@ class SysUserController extends BaseController {
 		return async ctx => {
 			const ctxUserId = ctx.state.user.userId
 			const userId = snowflake.nextId()
-			const { name, mobile, avatar, password, roleId, isDisabled } = ctx.request.body
+			const { name, mobile, avatar, password, roleId, storeId, isDisabled } = ctx.request.body
 			const passwordHash = generatePassword(password)
 			const data = { 
 				userId, 
@@ -93,6 +100,7 @@ class SysUserController extends BaseController {
 				avatar, 
 				password: passwordHash, 
 				roleId, 
+				storeId,
 				isDisabled, 
 				createBy: ctxUserId, 
 				createTime: new Date(), 
@@ -115,7 +123,7 @@ class SysUserController extends BaseController {
 	update() {
 		return async ctx => {
 			const ctxUserId = ctx.state.user.userId
-			const { userId, name, mobile, avatar, password, roleId, isDisabled } = ctx.request.body
+			const { userId, name, mobile, avatar, password, roleId, storeId, isDisabled } = ctx.request.body
 			try {
 				if (!userId) throw('userId不能为空！')
 				const data = {
@@ -123,6 +131,7 @@ class SysUserController extends BaseController {
 					mobile, 
 					avatar, 
 					roleId, 
+					storeId,
 					isDisabled, 
 					updateBy: ctxUserId, 
 					updateTime: new Date() 

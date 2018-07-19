@@ -2,6 +2,7 @@ const Sequelize = require('sequelize')
 const sequelize = require('../config/sequelize')
 
 const SysRole = require('./SysRole')
+const SysStore = require('./SysStore')
 
 /* 系统用户 */
 const SysUser = sequelize.define('sysUser', {
@@ -33,6 +34,10 @@ const SysUser = sequelize.define('sysUser', {
 	roleId: {
 		type: Sequelize.BIGINT(32)
 	},
+	// 门店ID
+	storeId: {
+		type: Sequelize.BIGINT(32)
+	},
 	// 是否禁用
 	isDisabled: {
 		type: Sequelize.BOOLEAN,
@@ -57,5 +62,6 @@ const SysUser = sequelize.define('sysUser', {
 })
 
 SysUser.belongsTo(SysRole, { as: 'role', foreignKey: 'roleId' })
+SysUser.belongsTo(SysStore, { as: 'store', foreignKey: 'storeId' })
 
 module.exports = SysUser

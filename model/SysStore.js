@@ -1,22 +1,15 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../config/sequelize')
 
-const SysStore = require('./SysStore')
-
-/* 人员 */
-const Person = sequelize.define('person', {
-	// 人员ID
-	personId: {
+/* 系统门店 */
+const SysStore = sequelize.define('sysStore', {
+	// 门店ID
+	storeId: {
 		type: Sequelize.BIGINT(32),
 		primaryKey: true,
 		allowNull: false
 	},
-	// 类型
-	type: {
-		type: Sequelize.STRING(16),
-		allowNull: false
-	},
-	// 姓名
+	// 名称
 	name: {
 		type: Sequelize.STRING(32),
 		allowNull: false
@@ -25,24 +18,9 @@ const Person = sequelize.define('person', {
 	mobile: {
 		type: Sequelize.STRING(16)
 	},
-	// 头像
-	avatar: {
+	// logo
+	logo: {
 		type: Sequelize.STRING(1024)
-	},
-	// 性别
-	sex: {
-		type: Sequelize.STRING(10),
-		defaultValue: 'male'
-	},
-	// 年龄
-	age: {
-		type: Sequelize.INTEGER,
-		defaultValue: 20
-	},
-	// 门店ID
-	storeId: {
-		type: Sequelize.BIGINT(32),
-		allowNull: false
 	},
 	// 简介
 	remark: {
@@ -66,6 +44,4 @@ const Person = sequelize.define('person', {
 	}
 })
 
-Person.belongsTo(SysStore, { as: 'store', foreignKey: 'storeId' })
-
-module.exports = Person
+module.exports = SysStore

@@ -3,6 +3,7 @@ const sequelize = require('../config/sequelize')
 
 const Member = require('./Member')
 const Product = require('./Product')
+const SysStore = require('./SysStore')
 
 /* 订单 */
 const Order = sequelize.define('orders', {
@@ -26,6 +27,11 @@ const Order = sequelize.define('orders', {
     productId: {
         type: Sequelize.BIGINT(32)
     },
+    // 门店ID
+    storeId: {
+        type: Sequelize.BIGINT(32),
+        allowNull: false
+    },
     // 订单总价
     totalPrice: {
         type: Sequelize.DOUBLE,
@@ -43,5 +49,6 @@ const Order = sequelize.define('orders', {
 
 Order.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
 Order.belongsTo(Product, { as: 'product', foreignKey: 'productId' })
+Order.belongsTo(SysStore, { as: 'store', foreignKey: 'storeId' })
 
 module.exports = Order

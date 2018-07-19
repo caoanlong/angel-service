@@ -3,6 +3,7 @@ const Lesson = require('../model/Lesson')
 const Product = require('../model/Product')
 const Member = require('../model/Member')
 const SysDict = require('../model/SysDict')
+const SysStore = require('../model/SysStore')
 const validator = require('validator')
 
 class LessonController extends BaseController {
@@ -11,11 +12,12 @@ class LessonController extends BaseController {
 	 */
     findList() {
         return async ctx => {
-            let { pageIndex = 1, pageSize = 10, keyword, startTime, endTime } = ctx.query
+            let { pageIndex = 1, pageSize = 10, keyword, storeId, startTime, endTime } = ctx.query
             pageIndex = Math.max(Number(pageIndex), 1)
             pageSize = Number(pageSize)
             const offset = (pageIndex - 1) * pageSize
             const where = {}
+            if (storeId) where['storeId'] = storeId
             if (startTime || endTime) where['createTime'] = {}
             if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))
             if (endTime) where['createTime']['$lte'] = new Date(Number(endTime))
@@ -43,6 +45,7 @@ class LessonController extends BaseController {
                     order: [['createTime', 'DESC']],
                     include: [
                         { model: Member, as: 'member' },
+                        { model: SysStore, as: 'store' },
                         { 
                             model: Product, as: 'product',
                             include: [{ model: SysDict, as: 'label' }] 
@@ -66,6 +69,7 @@ class LessonController extends BaseController {
                 const lesson = await Lesson.findById(lessonId, {
                     include: [
                         { model: Member, as: 'member' },
+                        { model: SysStore, as: 'store' },
                         {
                             model: Product, as: 'product',
                             include: [{ model: SysDict, as: 'label' }]

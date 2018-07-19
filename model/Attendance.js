@@ -2,6 +2,7 @@ const Sequelize = require('sequelize')
 const sequelize = require('../config/sequelize')
 
 const Member = require('./Member')
+const SysStore = require('./SysStore')
 
 /* 考勤 */
 const Attendance = sequelize.define('attendance', {
@@ -16,10 +17,15 @@ const Attendance = sequelize.define('attendance', {
         type: Sequelize.BIGINT(32),
         allowNull: false
     },
+    // 门店ID
+    storeId: {
+        type: Sequelize.BIGINT(32),
+        allowNull: false
+    },
     // 状态
     status: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
+        type: Sequelize.STRING(16),
+        defaultValue: 'success'
     },
     // 创建时间
     createTime: {
@@ -28,5 +34,6 @@ const Attendance = sequelize.define('attendance', {
 })
 
 Attendance.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
+Attendance.belongsTo(SysStore, { as: 'store', foreignKey: 'storeId' })
 
 module.exports = Attendance

@@ -1,22 +1,19 @@
 const BaseController = require('./BaseController')
-const Person = require('../model/Person')
 const SysStore = require('../model/SysStore')
 const validator = require('validator')
 const { snowflake } = require('../utils')
 
-class PersonController extends BaseController {
+class SysStoreController extends BaseController {
 	/**
 	 * 根据条件分页查询列表
 	 */
 	findList() {
 		return async ctx => {
-			let { pageIndex = 1, pageSize = 10, type, keyword, storeId, startTime, endTime } = ctx.query
+			let { pageIndex = 1, pageSize = 10, keyword, startTime, endTime } = ctx.query
 			pageIndex = Math.max(Number(pageIndex), 1)
 			pageSize = Number(pageSize)
 			const offset = (pageIndex - 1) * pageSize
 			const where = {}
-			if (type) where['type'] = type
-			if (storeId) where['storeId'] = storeId
 			if (keyword) {
 				where['$or'] = {}
 				where['$or']['name'] = { $like: '%' + keyword + '%' }
@@ -26,12 +23,11 @@ class PersonController extends BaseController {
 			if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))
 			if (endTime) where['createTime']['$lte'] = new Date(Number(endTime))
 			try {
-				const persons = await Person.findAndCountAll({
+				const sysStores = await SysStore.findAndCountAll({
 					where, offset, limit: pageSize,
-					include: [{ model: SysStore, as: 'store' }],
 					order: [['createTime', 'DESC']]
 				})
-				ctx.body = this.responseSussess({ pageIndex, pageSize, count: persons.count, rows: persons.rows })
+				ctx.body = this.responseSussess({ pageIndex, pageSize, count: sysStores.count, rows: sysStores.rows })
 			} catch (err) {
 				ctx.body = this.responseError(err)
 			}
@@ -42,13 +38,11 @@ class PersonController extends BaseController {
 	 */
 	findById() {
 		return async ctx => {
-			const { personId } = ctx.query
+			const { storeId } = ctx.query
 			try {
-				if (!personId) throw ('personId不能为空！')
-				const person = await Person.findById(personId, {
-					include: [{ model: SysStore, as: 'store' }]
-				})
-				ctx.body = this.responseSussess(person)
+				if (!storeId) throw ('storeId不能为空！')
+				const sysStore = await SysStore.findById(storeId)
+				ctx.body = this.responseSussess(sysStore)
 			} catch (err) {
 				ctx.body = this.responseError(err)
 			}
@@ -60,17 +54,13 @@ class PersonController extends BaseController {
 	create() {
 		return async ctx => {
 			const userId = ctx.state.user.userId
-			const personId = snowflake.nextId()
-			const { type, name, mobile, avatar, sex, age, storeId, remark } = ctx.request.body
+			const storeId = snowflake.nextId()
+			const { name, mobile, logo, remark } = ctx.request.body
 			const data = {
-				personId,
-				type,
+				storeId,
 				name,
 				mobile,
-				avatar,
-				sex,
-				age,
-				storeId,
+				logo,
 				remark,
 				createBy: userId,
 				createTime: new Date(),
@@ -78,9 +68,8 @@ class PersonController extends BaseController {
 				updateTime: new Date()
 			}
 			try {
-				if (!name) throw ('姓名不能为空！')
-				if (!mobile) throw ('手机号不能为空！')
-				await Person.create(data)
+				if (!name) throw ('名称不能为空！')
+				await SysStore.create(data)
 				ctx.body = this.responseSussess()
 			} catch (err) {
 				ctx.body = this.responseError(err)
@@ -93,21 +82,18 @@ class PersonController extends BaseController {
 	update() {
 		return async ctx => {
 			const userId = ctx.state.user.userId
-			const { personId, name, mobile, avatar, sex, age, storeId, remark } = ctx.request.body
+			const { storeId, name, mobile, logo, remark } = ctx.request.body
 			try {
-				if (!personId) throw ('personId不能为空！')
+				if (!storeId) throw ('storeId不能为空！')
 				const data = {
 					name,
 					mobile,
-					avatar,
-					sex,
-					age,
-					storeId,
+					logo,
 					remark,
 					updateBy: userId,
 					updateTime: new Date()
 				}
-				await Person.update(data, { where: { personId } })
+				await SysStore.update(data, { where: { storeId } })
 				ctx.body = this.responseSussess()
 			} catch (err) {
 				ctx.body = this.responseError(err)
@@ -122,7 +108,7 @@ class PersonController extends BaseController {
 			const { ids } = ctx.request.body
 			try {
 				if (!ids || ids.length == 0) throw ('ids不能为空！')
-				await Person.destroy({ where: { personId: { $in: ids } } })
+				await SysStore.destroy({ where: { storeId: { $in: ids } } })
 				ctx.body = this.responseSussess()
 			} catch (err) {
 				ctx.body = this.responseError(err)
@@ -134,12 +120,11 @@ class PersonController extends BaseController {
 	*/
 	suggest() {
 		return async ctx => {
-			const { type, keyword } = ctx.query
+			const { keyword } = ctx.query
 			const where = {}
-			if (type) where['type'] = type
 			if (keyword) where['name'] = { $like: '%' + keyword + '%' }
 			try {
-				const persons = await Person.findAll({ where })
+				const sysStores = await SysStore.findAll({ where })
 				ctx.body = this.responseSussess(persons)
 			} catch (err) {
 				ctx.body = this.responseError(err)
@@ -148,4 +133,4 @@ class PersonController extends BaseController {
 	}
 }
 
-module.exports = PersonController
+module.exports = SysStoreController

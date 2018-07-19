@@ -5,7 +5,7 @@ const { jwtConfig } = require('../config')
 class InterceptorController extends BaseController {
     adminInterceptor() {
         return async (ctx, next) => {
-            if (ctx.url.includes('login')) {
+            if (ctx.url.includes('login') || ctx.url.includes('attendance')) {
                 await next()
                 return
             }
