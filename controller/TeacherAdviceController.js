@@ -2,6 +2,7 @@ const BaseController = require('./BaseController')
 const TeacherAdvice = require('../model/TeacherAdvice')
 const Member = require('../model/Member')
 const Person = require('../model/Person')
+const SysStore = require('../model/SysStore')
 const validator = require('validator')
 const { snowflake } = require('../utils')
 
@@ -11,11 +12,12 @@ class TeacherAdviceController extends BaseController {
 	 */
     findList() {
         return async ctx => {
-            let { pageIndex = 1, pageSize = 10, keyword, startTime, endTime } = ctx.query
+            let { pageIndex = 1, pageSize = 10, keyword, storeId, startTime, endTime } = ctx.query
             pageIndex = Math.max(Number(pageIndex), 1)
             pageSize = Number(pageSize)
             const offset = (pageIndex - 1) * pageSize
             const where = {}
+            if (storeId) where['storeId'] = storeId
             if (startTime || endTime) where['createTime'] = {}
             if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))
             if (endTime) where['createTime']['$lte'] = new Date(Number(endTime))
@@ -43,7 +45,8 @@ class TeacherAdviceController extends BaseController {
                     where, offset, limit: pageSize,
                     include: [
                         { model: Member, as: 'member' },
-                        { model: Person, as: 'person' }
+                        { model: Person, as: 'person' },
+                        { model: SysStore, as: 'store' }
                     ],
                     order: [['createTime', 'DESC']]
                 })
@@ -64,7 +67,8 @@ class TeacherAdviceController extends BaseController {
                 const teacherAdvice = await TeacherAdvice.findById(teacherAdviceId, {
                     include: [
                         { model: Member, as: 'member' },
-                        { model: Person, as: 'person' }
+                        { model: Person, as: 'person' },
+                        { model: SysStore, as: 'store' }
                     ]
                 })
                 ctx.body = this.responseSussess(teacherAdvice)
@@ -80,11 +84,12 @@ class TeacherAdviceController extends BaseController {
         return async ctx => {
             const userId = ctx.state.user.userId
             const teacherAdviceId = snowflake.nextId()
-            const { memberId, personId, remark } = ctx.request.body
+            const { memberId, personId, storeId, remark } = ctx.request.body
             const data = {
                 teacherAdviceId,
                 memberId,
                 personId,
+                storeId,
                 remark,
                 createBy: userId,
                 createTime: new Date(),
@@ -107,12 +112,13 @@ class TeacherAdviceController extends BaseController {
     update() {
         return async ctx => {
             const userId = ctx.state.user.userId
-            const { teacherAdviceId, memberId, personId, remark } = ctx.request.body
+            const { teacherAdviceId, memberId, personId, storeId, remark } = ctx.request.body
             try {
                 if (!teacherAdviceId) throw ('teacherAdviceId不能为空！')
                 const data = {
                     memberId,
                     personId,
+                    storeId,
                     remark,
                     updateBy: userId,
                     updateTime: new Date()

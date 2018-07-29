@@ -201,6 +201,31 @@ class MemberController extends BaseController {
 		}
 	}
 	/**
+	 * 修改手机号
+	 */
+	updateMobile() {
+		return async ctx => {
+			const memberId = ctx.state.member.memberId
+			const { mobile, newMobile, vcode } = ctx.request.body
+			try {
+				if (!mobile) throw ('手机号不能为空！')
+				if (!newMobile) throw ('新手机号不能为空！')
+				if (!vcode) throw ('验证码不能为空！')
+				const smsCode = await SmsCode.find({ where: { mobile, code: vcode } })
+				if (!smsCode) throw ('验证码错误！')
+				const currentTime = new Date().getTime()
+				const addTime = smsCode.updateTime
+				const time = 120 * 1000
+				if (currentTime - addTime > time) throw ('验证码已失效！')
+				const data = { mobile: newMobile }
+				await Member.update(data, { where: { memberId } })
+				ctx.body = this.responseSussess()
+			} catch (err) {
+				ctx.body = this.responseError(err)
+			}
+		}
+	}
+	/**
 	 * 登录
 	 */
 	login() {

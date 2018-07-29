@@ -2,6 +2,7 @@ const Sequelize = require('sequelize')
 const sequelize = require('../config/sequelize')
 
 const Member = require('./Member')
+const SysStore = require('./SysStore')
 
 /* 课间剪影 */
 const LessonPhoto = sequelize.define('lessonPhoto', {
@@ -26,6 +27,11 @@ const LessonPhoto = sequelize.define('lessonPhoto', {
         type: Sequelize.STRING(1024),
         allowNull: false
     },
+    // 门店ID
+    storeId: {
+        type: Sequelize.BIGINT(32),
+        allowNull: false
+    },
     // 创建者
     createBy: {
         type: Sequelize.BIGINT(32)
@@ -45,5 +51,6 @@ const LessonPhoto = sequelize.define('lessonPhoto', {
 })
 
 LessonPhoto.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
+LessonPhoto.belongsTo(SysStore, { as: 'store', foreignKey: 'storeId' })
 
 module.exports = LessonPhoto

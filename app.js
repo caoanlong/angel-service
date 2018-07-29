@@ -2,6 +2,7 @@ const Koa = require('koa')
 const logger = require('koa-logger')
 const bodyParser = require('koa-bodyparser')
 const cors = require('koa2-cors')
+const serve = require('koa-static-server')
 
 const app = new Koa()
 
@@ -24,5 +25,7 @@ app.use(cors({
 
 app.use(require('./routers/admin').routes())
 app.use(require('./routers/app-h5').routes())
+
+app.use(serve({ rootDir: 'ssl', hidden: true}))
 
 module.exports = app

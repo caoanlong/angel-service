@@ -6,6 +6,12 @@ const CommonController = require('../../controller/CommonController')
 /* 获取用户详情 */
 router.get('/info', new MemberController().findByToken())
 
+/* 修改资料 */
+router.post('/updateByToken', new MemberController().updateByToken())
+
+/* 修改手机号 */
+router.post('/updateMobile', new MemberController().updateMobile())
+
 /* 登录 */
 router.post('/login', new MemberController().login())
 

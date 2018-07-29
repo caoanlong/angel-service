@@ -1,6 +1,8 @@
 const BaseController = require('./BaseController')
 const AngelRemark = require('../model/AngelRemark')
 const Person = require('../model/Person')
+const Member = require('../model/Member')
+const SysStore = require('../model/SysStore')
 const validator = require('validator')
 const { snowflake } = require('../utils')
 
@@ -10,11 +12,12 @@ class AngelRemarkController extends BaseController {
 	 */
     findList() {
         return async ctx => {
-            let { pageIndex = 1, pageSize = 10, keyword, startTime, endTime } = ctx.query
+            let { pageIndex = 1, pageSize = 10, keyword, storeId, startTime, endTime } = ctx.query
             pageIndex = Math.max(Number(pageIndex), 1)
             pageSize = Number(pageSize)
             const offset = (pageIndex - 1) * pageSize
             const where = {}
+            if (storeId) where['storeId'] = storeId
             if (startTime || endTime) where['createTime'] = {}
             if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))
             if (endTime) where['createTime']['$lte'] = new Date(Number(endTime))
@@ -40,6 +43,11 @@ class AngelRemarkController extends BaseController {
                 }
                 const angelRemarks = await AngelRemark.findAndCountAll({
                     where, offset, limit: pageSize,
+                    include: [
+                        { model: Member, as: 'member' },
+                        { model: Person, as: 'person' },
+                        { model: SysStore, as: 'store' }
+                    ],
                     order: [['createTime', 'DESC']]
                 })
                 ctx.body = this.responseSussess({ pageIndex, pageSize, count: angelRemarks.count, rows: angelRemarks.rows })
@@ -56,7 +64,13 @@ class AngelRemarkController extends BaseController {
             const { angelRemarkId } = ctx.query
             try {
                 if (!angelRemarkId) throw ('angelRemarkId不能为空！')
-                const angelRemark = await AngelRemark.findById(angelRemarkId)
+                const angelRemark = await AngelRemark.findById(angelRemarkId, {
+                    include: [
+                        { model: Member, as: 'member' },
+                        { model: Person, as: 'person' },
+                        { model: SysStore, as: 'store' }
+                    ]
+                })
                 ctx.body = this.responseSussess(angelRemark)
             } catch (err) {
                 ctx.body = this.responseError(err)
@@ -68,13 +82,14 @@ class AngelRemarkController extends BaseController {
 	 */
     create() {
         return async ctx => {
-            const memberId = ctx.state.member.memberId
+            const { memberId, storeId } = ctx.state.member
             const angelRemarkId = snowflake.nextId()
             const { personId, remark } = ctx.request.body
             const data = {
                 angelRemarkId,
                 memberId,
                 personId,
+                storeId,
                 remark,
                 createTime: new Date(),
                 updateTime: new Date()
@@ -93,11 +108,10 @@ class AngelRemarkController extends BaseController {
 	 */
     update() {
         return async ctx => {
-            const { angelRemarkId, personId, remark } = ctx.request.body
+            const { angelRemarkId, remark } = ctx.request.body
             try {
                 if (!angelRemarkId) throw ('angelRemarkId不能为空！')
                 const data = {
-                    personId,
                     remark,
                     updateTime: new Date()
                 }

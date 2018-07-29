@@ -4,6 +4,7 @@ const sequelize = require('../config/sequelize')
 const Member = require('./Member')
 const Person = require('./Person')
 const SysDict = require('./SysDict')
+const SysStore = require('./SysStore')
 
 /* 健康报告 */
 const HealthRecord = sequelize.define('healthRecord', {
@@ -42,6 +43,11 @@ const HealthRecord = sequelize.define('healthRecord', {
 		type: Sequelize.STRING(1024),
 		allowNull: false
 	},
+	// 门店ID
+	storeId: {
+		type: Sequelize.BIGINT(32),
+		allowNull: false
+	},
 	// 创建者
 	createBy: {
 		type: Sequelize.BIGINT(32)
@@ -63,5 +69,6 @@ const HealthRecord = sequelize.define('healthRecord', {
 HealthRecord.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
 HealthRecord.belongsTo(Person, { as: 'person', foreignKey: 'personId' })
 HealthRecord.belongsTo(SysDict, { as: 'type', foreignKey: 'typeId' })
+HealthRecord.belongsTo(SysStore, { as: 'store', foreignKey: 'storeId' })
 
 module.exports = HealthRecord

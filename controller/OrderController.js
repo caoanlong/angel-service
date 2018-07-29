@@ -98,7 +98,8 @@ class OrderController extends BaseController {
 						productId,
 						storeId,
 						totalNum: product.lessonNum,
-						validityDate: new Date(new Date().getTime() + product.validDate * 24 * 3600000)
+						validityDate: new Date(new Date().getTime() + product.validDate * 24 * 3600000),
+						createTime: new Date()
 					})
 				}
 				const totalPrice = product.price

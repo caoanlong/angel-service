@@ -5,9 +5,10 @@ const sequelize = require('../config/sequelize')
 const SysStore = sequelize.define('sysStore', {
 	// 门店ID
 	storeId: {
-		type: Sequelize.BIGINT(32),
-		primaryKey: true,
-		allowNull: false
+		type: Sequelize.INTEGER,
+		allowNull: false,
+		autoIncrement: true,
+		primaryKey: true
 	},
 	// 名称
 	name: {

@@ -54,10 +54,8 @@ class SysStoreController extends BaseController {
 	create() {
 		return async ctx => {
 			const userId = ctx.state.user.userId
-			const storeId = snowflake.nextId()
 			const { name, mobile, logo, remark } = ctx.request.body
 			const data = {
-				storeId,
 				name,
 				mobile,
 				logo,

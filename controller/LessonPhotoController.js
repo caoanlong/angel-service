@@ -1,6 +1,7 @@
 const BaseController = require('./BaseController')
 const LessonPhoto = require('../model/LessonPhoto')
 const Member = require('../model/Member')
+const SysStore = require('../model/SysStore')
 const validator = require('validator')
 const { snowflake } = require('../utils')
 
@@ -10,11 +11,12 @@ class LessonPhotoController extends BaseController {
 	 */
     findList() {
         return async ctx => {
-            let { pageIndex = 1, pageSize = 10, keyword, startTime, endTime } = ctx.query
+            let { pageIndex = 1, pageSize = 10, keyword, storeId, startTime, endTime } = ctx.query
             pageIndex = Math.max(Number(pageIndex), 1)
             pageSize = Number(pageSize)
             const offset = (pageIndex - 1) * pageSize
             const where = {}
+            if (storeId) where['storeId'] = storeId
             if (startTime || endTime) where['createTime'] = {}
             if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))
             if (endTime) where['createTime']['$lte'] = new Date(Number(endTime))
@@ -32,7 +34,10 @@ class LessonPhotoController extends BaseController {
                 }
                 const lessonPhotos = await LessonPhoto.findAndCountAll({
                     where, offset, limit: pageSize,
-                    include: [{ model: Member, as: 'member' }],
+                    include: [
+                        { model: Member, as: 'member' },
+                        { model: SysStore, as: 'store' }
+                    ],
                     order: [['createTime', 'DESC']]
                 })
                 ctx.body = this.responseSussess({ pageIndex, pageSize, count: lessonPhotos.count, rows: lessonPhotos.rows })
@@ -50,7 +55,10 @@ class LessonPhotoController extends BaseController {
             try {
                 if (!lessonPhotoId) throw ('lessonPhotoId不能为空！')
                 const lessonPhoto = await LessonPhoto.findById(lessonPhotoId, {
-                    include: [{ model: Member, as: 'member' }]
+                    include: [
+                        { model: Member, as: 'member' },
+                        { model: SysStore, as: 'store' }
+                    ]
                 })
                 ctx.body = this.responseSussess(lessonPhoto)
             } catch (err) {
@@ -65,12 +73,13 @@ class LessonPhotoController extends BaseController {
         return async ctx => {
             const userId = ctx.state.user.userId
             const lessonPhotoId = snowflake.nextId()
-            const { memberId, title, photos } = ctx.request.body
+            const { memberId, title, photos, storeId } = ctx.request.body
             const data = {
                 lessonPhotoId,
                 memberId,
                 title,
                 photos,
+                storeId,
                 createBy: userId,
                 createTime: new Date(),
                 updateBy: userId,
@@ -92,13 +101,14 @@ class LessonPhotoController extends BaseController {
     update() {
         return async ctx => {
             const userId = ctx.state.user.userId
-            const { lessonPhotoId, memberId, title, photos } = ctx.request.body
+            const { lessonPhotoId, memberId, title, photos, storeId } = ctx.request.body
             try {
                 if (!lessonPhotoId) throw ('lessonPhotoId不能为空！')
                 const data = {
                     memberId,
                     title,
                     photos,
+                    storeId,
                     updateBy: userId,
                     updateTime: new Date()
                 }

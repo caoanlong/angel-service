@@ -2,6 +2,7 @@ const BaseController = require('./BaseController')
 const HealthRecord = require('../model/HealthRecord')
 const Member = require('../model/Member')
 const Person = require('../model/Person')
+const SysStore = require('../model/SysStore')
 const SysDict = require('../model/SysDict')
 const validator = require('validator')
 const { snowflake } = require('../utils')
@@ -12,12 +13,13 @@ class HealthRecordController extends BaseController {
 	 */
 	findList() {
 		return async ctx => {
-			let { pageIndex = 1, pageSize = 10, keyword, typeId, startTime, endTime } = ctx.query
+			let { pageIndex = 1, pageSize = 10, keyword, typeId, storeId, startTime, endTime } = ctx.query
 			pageIndex = Math.max(Number(pageIndex), 1)
 			pageSize = Number(pageSize)
 			const offset = (pageIndex - 1) * pageSize
 			const where = {}
 			if (typeId) where['typeId'] = typeId
+			if (storeId) where['storeId'] = storeId
 			if (startTime || endTime) where['createTime'] = {}
 			if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))
 			if (endTime) where['createTime']['$lte'] = new Date(Number(endTime))
@@ -46,7 +48,8 @@ class HealthRecordController extends BaseController {
 					include: [
 						{ model: Member, as: 'member' },
 						{ model: Person, as: 'person' },
-						{ model: SysDict, as: 'type' }
+						{ model: SysDict, as: 'type' },
+						{ model: SysStore, as: 'store' }
 					],
 					order: [['createTime', 'DESC']]
 				})
@@ -68,7 +71,8 @@ class HealthRecordController extends BaseController {
 					include: [
 						{ model: Member, as: 'member' },
 						{ model: Person, as: 'person' },
-						{ model: SysDict, as: 'type' }
+						{ model: SysDict, as: 'type' },
+						{ model: SysStore, as: 'store' }
 					]
 				})
 				ctx.body = this.responseSussess(healthRecord)
@@ -84,13 +88,14 @@ class HealthRecordController extends BaseController {
 		return async ctx => {
 			const userId = ctx.state.user.userId
 			const healthRecordId = snowflake.nextId()
-			const { name, memberId, personId, typeId, recordDate, file } = ctx.request.body
+			const { name, memberId, personId, typeId, storeId, recordDate, file } = ctx.request.body
 			const data = {
 				healthRecordId,
 				name,
 				memberId,
 				personId,
 				typeId,
+				storeId,
 				recordDate,
 				file,
 				createBy: userId,
@@ -115,7 +120,7 @@ class HealthRecordController extends BaseController {
 	update() {
 		return async ctx => {
 			const userId = ctx.state.user.userId
-			const { healthRecordId, name, memberId, personId, typeId, recordDate, file } = ctx.request.body
+			const { healthRecordId, name, memberId, personId, typeId, storeId, recordDate, file } = ctx.request.body
 			try {
 				if (!healthRecordId) throw ('healthRecordId不能为空！')
 				const data = {
@@ -123,6 +128,7 @@ class HealthRecordController extends BaseController {
 					memberId,
 					personId,
 					typeId,
+					storeId,
 					recordDate,
 					file, 
 					updateBy: userId, 

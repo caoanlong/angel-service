@@ -11,5 +11,6 @@ router.use(require('./lessonPhoto').routes())
 router.use(require('./teacherAdvice').routes())
 router.use(require('./product').routes())
 router.use(require('./order').routes())
+router.use(require('./person').routes())
 
 module.exports = router

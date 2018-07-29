@@ -3,6 +3,7 @@ const sequelize = require('../config/sequelize')
 
 const Member = require('./Member')
 const Person = require('./Person')
+const SysStore = require('./SysStore')
 
 /* 老师建议 */
 const TeacherAdvice = sequelize.define('teacherAdvice', {
@@ -19,6 +20,11 @@ const TeacherAdvice = sequelize.define('teacherAdvice', {
     },
     // 老师ID
     personId: {
+        type: Sequelize.BIGINT(32),
+        allowNull: false
+    },
+    // 门店ID
+    storeId: {
         type: Sequelize.BIGINT(32),
         allowNull: false
     },
@@ -47,5 +53,6 @@ const TeacherAdvice = sequelize.define('teacherAdvice', {
 
 TeacherAdvice.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
 TeacherAdvice.belongsTo(Person, { as: 'person', foreignKey: 'personId' })
+TeacherAdvice.belongsTo(SysStore, { as: 'store', foreignKey: 'storeId' })
 
 module.exports = TeacherAdvice

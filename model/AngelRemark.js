@@ -3,6 +3,7 @@ const sequelize = require('../config/sequelize')
 
 const Member = require('./Member')
 const Person = require('./Person')
+const SysStore = require('./SysStore')
 
 /* 天使留言 */
 const AngelRemark = sequelize.define('angelRemark', {
@@ -19,6 +20,11 @@ const AngelRemark = sequelize.define('angelRemark', {
     },
     // 人员ID
     personId: {
+        type: Sequelize.BIGINT(32),
+        allowNull: false
+    },
+    // 门店ID
+    storeId: {
         type: Sequelize.BIGINT(32),
         allowNull: false
     },
@@ -39,5 +45,6 @@ const AngelRemark = sequelize.define('angelRemark', {
 
 AngelRemark.belongsTo(Member, { as: 'member', foreignKey: 'memberId' })
 AngelRemark.belongsTo(Person, { as: 'person', foreignKey: 'personId' })
+AngelRemark.belongsTo(SysStore, { as: 'store', foreignKey: 'storeId' })
 
 module.exports = AngelRemark
