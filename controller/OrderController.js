@@ -4,6 +4,7 @@ const Member = require('../model/Member')
 const Lesson = require('../model/Lesson')
 const Product = require('../model/Product')
 const SysStore = require('../model/SysStore')
+const SysDict = require('../model/SysDict')
 const validator = require('validator')
 const { snowflake, generateOrderNo } = require('../utils')
 
@@ -45,8 +46,11 @@ class OrderController extends BaseController {
 					where, offset, limit: pageSize,
 					include: [
 						{ model: Member, as: 'member' },
-						{ model: Product, as: 'product' },
-						{ model: SysStore, as: 'store' }
+						{ model: SysStore, as: 'store' },
+						{ 
+							model: Product, as: 'product',
+							include: [{ model: SysDict, as: 'label' }] 
+						}
 					],
 					order: [['createTime', 'DESC']]
 				})
@@ -67,8 +71,11 @@ class OrderController extends BaseController {
 				const order = await Order.findById(orderId, {
 					include: [
 						{ model: Member, as: 'member' },
-						{ model: Product, as: 'product' },
-						{ model: SysStore, as: 'store' }
+						{ model: SysStore, as: 'store' },
+						{ 
+							model: Product, as: 'product',
+							include: [{ model: SysDict, as: 'label' }] 
+						}
 					],
 				})
 				ctx.body = this.responseSussess(order)

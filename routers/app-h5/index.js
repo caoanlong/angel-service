@@ -12,5 +12,6 @@ router.use(require('./teacherAdvice').routes())
 router.use(require('./product').routes())
 router.use(require('./order').routes())
 router.use(require('./person').routes())
+router.use(require('./lesson').routes())
 
 module.exports = router
