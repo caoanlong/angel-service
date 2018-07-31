@@ -23,4 +23,7 @@ router.post('/disable', new MemberController().disable())
 /* 搜索建议 */
 router.get('/suggest', new MemberController().suggest())
 
+/* 批量添加 */
+router.post('/addMutiple', new MemberController().addMutiple())
+
 module.exports = router

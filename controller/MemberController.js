@@ -171,6 +171,38 @@ class MemberController extends BaseController {
 		}
 	}
 	/**
+	 * 批量添加
+	 */
+	addMutiple() {
+		return async ctx => {
+			const { userId, storeId } = ctx.state.user
+			const { data } = ctx.request.body
+			const currentTime = new Date()
+			const members = data.map(item => {
+				return {
+					memberId: snowflake.nextId(),
+					name: item.name,
+					mobile: item.mobile,
+					code: item.code,
+					storeId: storeId,
+					parentName: item.parentName,
+					parentMobile: item.parentMobile,
+					from: item.from,
+					createBy: userId,
+					createTime: currentTime, 
+					updateBy: userId, 
+					updateTime: currentTime 
+				}
+			})
+			try {
+				await Member.bulkCreate(members)
+				ctx.body = this.responseSussess()
+			} catch (err) {
+				ctx.body = this.responseError(err)
+			}
+		}
+	}
+	/**
 	 * 根据token查询详情
 	 */
 	findByToken() {
