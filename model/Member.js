@@ -27,7 +27,7 @@ const Member = sequelize.define('member', {
 	// 性别
 	sex: {
 		type: Sequelize.STRING(10),
-		defaultValue: 'male'
+		defaultValue: '男'
 	},
 	// 年龄
 	age: {

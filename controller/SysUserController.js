@@ -235,6 +235,7 @@ class SysUserController extends BaseController {
 				const payLoad = {
 					userId: sysUser.userId,
 					roleId: sysUser.roleId,
+					storeId: sysUser.storeId,
 					avatar: sysUser.avatar,
 					name: sysUser.name,
 					mobile: sysUser.mobile

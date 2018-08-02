@@ -177,24 +177,27 @@ class MemberController extends BaseController {
 		return async ctx => {
 			const { userId, storeId } = ctx.state.user
 			const { data } = ctx.request.body
-			const currentTime = new Date()
-			const members = data.map(item => {
-				return {
-					memberId: snowflake.nextId(),
-					name: item.name,
-					mobile: item.mobile,
-					code: item.code,
-					storeId: storeId,
-					parentName: item.parentName,
-					parentMobile: item.parentMobile,
-					from: item.from,
-					createBy: userId,
-					createTime: currentTime, 
-					updateBy: userId, 
-					updateTime: currentTime 
-				}
-			})
 			try {
+				const memberMobiles = data.map(item => item.mobile)
+				const list = await Member.findAll({ where: { mobile: { $in: memberMobiles } } })
+				if (list && list.length > 0) throw ('手机号已经存在！')
+				const currentTime = new Date()
+				const members = data.map(item => {
+					return {
+						memberId: snowflake.nextId(),
+						name: item.name,
+						mobile: item.mobile,
+						code: item.code,
+						storeId: storeId,
+						parentName: item.parentName,
+						parentMobile: item.parentMobile,
+						from: item.from,
+						createBy: userId,
+						createTime: currentTime,
+						updateBy: userId,
+						updateTime: currentTime
+					}
+				})
 				await Member.bulkCreate(members)
 				ctx.body = this.responseSussess()
 			} catch (err) {
