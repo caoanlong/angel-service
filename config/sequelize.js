@@ -60,8 +60,10 @@ const sequelize = new Sequelize(mysql.database, mysql.user, mysql.password, {
 })
 
 // sequelize.sync({force: true})
-sequelize.sync()
-
-console.log('mysql connect success at ' + mysql.port + '!!!')
+sequelize.sync().then(() => {
+	console.log('mysql connect success at ' + mysql.port + '!!!')
+}).catch(err => {
+	console.log(err.toString())
+})
 
 module.exports = sequelize
