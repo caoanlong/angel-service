@@ -93,6 +93,18 @@ class AttendanceController extends BaseController {
 			}
 		}
 	}
+
+	test() {
+		return async ctx => {
+			let data = {}
+			if (ctx.request.method == 'GET') {
+				data = ctx.query
+			} else {
+				data = ctx.request.body
+			}
+			ctx.body = data
+		}
+	}
 }
 
 module.exports = AttendanceController
