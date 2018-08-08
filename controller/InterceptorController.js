@@ -24,7 +24,7 @@ class InterceptorController extends BaseController {
     }
     apiInterceptor() {
         return async (ctx, next) => {
-            if (ctx.url.includes('login') || ctx.url.includes('getSmsCode')) {
+            if (ctx.url.includes('login') || ctx.url.includes('getSmsCode') || ctx.url.includes('person')) {
                 await next()
                 return
             }
