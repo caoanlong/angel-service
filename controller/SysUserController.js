@@ -90,11 +90,9 @@ class SysUserController extends BaseController {
 	create() {
 		return async ctx => {
 			const ctxUserId = ctx.state.user.userId
-			const userId = snowflake.nextId()
 			const { name, mobile, avatar, password, roleId, storeId, isDisabled } = ctx.request.body
 			const passwordHash = generatePassword(password)
-			const data = { 
-				userId, 
+			const data = {
 				name, 
 				mobile, 
 				avatar, 

@@ -9,6 +9,7 @@ const Person = sequelize.define('person', {
 	personId: {
 		type: Sequelize.BIGINT(32),
 		primaryKey: true,
+		autoIncrement: true,
 		allowNull: false
 	},
 	// 类型

@@ -62,10 +62,8 @@ class MemberController extends BaseController {
 	create() {
 		return async ctx => {
 			const userId = ctx.state.user.userId
-			const memberId = snowflake.nextId()
 			const { name, mobile, avatar, sex, age, code, storeId, parentName, parentMobile, from, remark } = ctx.request.body
 			const data = {
-				memberId,
 				name,
 				mobile,
 				avatar,

@@ -7,6 +7,7 @@ const SysDict = sequelize.define('sysDict', {
 	dictId: {
 		type: Sequelize.BIGINT(32),
 		primaryKey: true,
+		autoIncrement: true,
 		allowNull: false
     },
     // 键

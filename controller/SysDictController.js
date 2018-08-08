@@ -48,10 +48,8 @@ class SysDictController extends BaseController {
 	create() {
 		return async ctx => {
 			const userId = ctx.state.user.userId
-			const dictId = snowflake.nextId()
 			const { key, value, type, sort, description } = ctx.request.body
-			const data = { 
-				dictId, 
+			const data = {
 				key,
 				value,
 				type,

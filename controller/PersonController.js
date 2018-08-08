@@ -60,10 +60,8 @@ class PersonController extends BaseController {
 	create() {
 		return async ctx => {
 			const userId = ctx.state.user.userId
-			const personId = snowflake.nextId()
 			const { type, name, mobile, avatar, sex, age, storeId, remark } = ctx.request.body
 			const data = {
-				personId,
 				type,
 				name,
 				mobile,

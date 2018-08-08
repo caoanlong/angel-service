@@ -7,6 +7,7 @@ const SysRole = sequelize.define('sysRole', {
 	roleId: {
 		type: Sequelize.BIGINT(32),
 		primaryKey: true,
+		autoIncrement: true,
 		allowNull: false
 	},
 	// 姓名

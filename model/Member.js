@@ -9,6 +9,7 @@ const Member = sequelize.define('member', {
 	memberId: {
 		type: Sequelize.BIGINT(32),
 		primaryKey: true,
+		autoIncrement: true,
 		allowNull: false
 	},
 	// 姓名

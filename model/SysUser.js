@@ -10,6 +10,7 @@ const SysUser = sequelize.define('sysUser', {
 	userId: {
 		type: Sequelize.BIGINT(32),
 		primaryKey: true,
+		autoIncrement: true,
 		allowNull: false
 	},
 	// 姓名
