@@ -37,7 +37,7 @@ class HealthRecordController extends BaseController {
 							attributes: ['personId']
 						})
 						if (persons && persons.length > 0) {
-							where['memberId'] = { $in: persons.map(item => item.personId) }
+							where['personId'] = { $in: persons.map(item => item.personId) }
 						} else {
 							where['name'] = { $like: '%' + keyword + '%' }
 						}

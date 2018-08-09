@@ -54,7 +54,9 @@ class SysRoleController extends BaseController {
 		return async ctx => {
 			const userId = ctx.state.user.userId
 			const { name } = ctx.request.body
+			const roleId = snowflake.nextId()
 			const data = {
+				roleId,
 				name, 
 				createBy: userId, 
 				createTime: new Date(), 

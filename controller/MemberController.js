@@ -83,6 +83,8 @@ class MemberController extends BaseController {
 			try {
 				if (!name) throw ('姓名不能为空！')
 				if (!mobile) throw ('手机号不能为空！')
+				const member = await Member.find({where: { mobile }})
+				if (member) throw ('手机号已存在！')
 				await Member.create(data)
 				ctx.body = this.responseSussess()
 			} catch (err) {
