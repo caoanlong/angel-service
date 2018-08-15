@@ -22,7 +22,11 @@ app.use(cors({
     allowMethods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Accept', 'X-Access-Token']
 }))
-
+/* 打卡 */
+app.use(async (ctx, next) => {
+    console.log(ctx.request)
+    next()
+})
 app.use(require('./routers/admin').routes())
 app.use(require('./routers/app-h5').routes())
 
