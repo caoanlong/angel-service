@@ -55,7 +55,7 @@ const sequelize = new Sequelize(mysql.database, mysql.user, mysql.password, {
 	},
 	// operatorsAliases: false,
 	timezone: '+08:00',
-	logging: true,
+	logging: console.log,
 	operatorsAliases
 })
 

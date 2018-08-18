@@ -6,7 +6,7 @@ const serve = require('koa-static-server')
 
 const app = new Koa()
 
-app.use(bodyParser())
+
 app.use(logger())
 
 app.use(cors({
@@ -18,15 +18,15 @@ app.use(cors({
         // return ctx.request.header.origin
         // return 'http://localhost:8080' // 这样就能只允许 http://localhost:8080 这个域名的请求了
     },
-    exposeHeaders: ['Accept', 'X-Access-Token'],
+    // exposeHeaders: ['Accept', 'X-Access-Token', 'response_code'],
+    exposeHeaders: ['*'],
     allowMethods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Accept', 'X-Access-Token']
+    // allowHeaders: ['Content-Type', 'Accept', 'X-Access-Token'],
+    allowHeaders: ['*']
 }))
-/* 打卡 */
-app.use(async (ctx, next) => {
-    console.log(ctx.request)
-    next()
-})
+
+app.use(require('./routers/attendance').routes())
+app.use(bodyParser())
 app.use(require('./routers/admin').routes())
 app.use(require('./routers/app-h5').routes())
 
