@@ -13,5 +13,6 @@ router.use(require('./product').routes())
 router.use(require('./order').routes())
 router.use(require('./person').routes())
 router.use(require('./lesson').routes())
+router.use(require('./weixin').routes())
 
 module.exports = router

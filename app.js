@@ -30,6 +30,6 @@ app.use(bodyParser())
 app.use(require('./routers/admin').routes())
 app.use(require('./routers/app-h5').routes())
 
-app.use(serve({ rootDir: 'ssl', hidden: true}))
+// app.use(serve({ rootDir: 'ssl', hidden: true}))
 
 module.exports = app

@@ -35,25 +35,25 @@ router.post('/', async ctx => {
     ctx.set({ 'content-type': 'application/octet-stream' })
     if (ctx.headers['request_code'] == 'realtime_enroll_data') {
         const data = await parsePostData(ctx)
-        console.log(data)
+        // console.log(data)
         if (data) {
             ctx.set({ 'response_code': 'OK' })
         } else {
             ctx.set({ 'response_code': 'ERROR' })
         }
         ctx.body = '{"response_code":"OK"}'
-        console.log(ctx.response)
+        // console.log(ctx.response)
     }
     if (ctx.headers['request_code'] == 'realtime_glog') {
         const data = await parsePostData(ctx)
-        console.log(data)
+        // console.log(data)
         if (data) {
             ctx.set({ 'response_code': 'OK' })
         } else {
             ctx.set({ 'response_code': 'ERROR' })
         }
         ctx.body = '{"response_code":"OK"}'
-        console.log(ctx.response)
+        // console.log(ctx.response)
     }
     // ctx.body = 'success'
 })
