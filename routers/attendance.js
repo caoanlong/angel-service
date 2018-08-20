@@ -20,7 +20,6 @@ function parsePostData( ctx ) {
     })
 }
 router.post('/', async ctx => {
-    // console.log(ctx.headers['request_code'])
     // if (ctx.headers['request_code'] == 'receive_cmd') {
     //     console.log(111)
     //     ctx.set({ 'cmd_code': 'GET_ENROLL_DATA' })
@@ -34,10 +33,12 @@ router.post('/', async ctx => {
     // }
     ctx.set({ 'content-type': 'application/octet-stream' })
     if (ctx.headers['request_code'] == 'realtime_enroll_data') {
+        console.log(ctx.headers)
         const data = await parsePostData(ctx)
         // console.log(data)
         if (data) {
             ctx.set({ 'response_code': 'OK' })
+            ctx.set({ 'trans_id': 'RTEnrollDataAction' })
         } else {
             ctx.set({ 'response_code': 'ERROR' })
         }
