@@ -20,28 +20,13 @@ function parsePostData( ctx ) {
     })
 }
 router.post('/', async ctx => {
-     
-    // if (ctx.headers['request_code'] == 'receive_cmd') {
-    //     console.log(111)
-    //     ctx.set({ 'cmd_code': 'GET_ENROLL_DATA' })
-    //     ctx.body = 'success'
-    //     return
-    // }
-    // if (ctx.headers['request_code'] == 'send_cmd_result') {
-    //     console.log(ctx)
-    //     ctx.body = 'success'
-    //     return
-    // }
     ctx.set({ 'content-type': 'application/octet-stream' })
     if (ctx.headers['request_code'] == 'realtime_enroll_data') {
-        // console.log(ctx.headers)
+        console.log(ctx.headers)
         const data = await parsePostData(ctx)
         console.log(data)
         if (data) {
             ctx.set({ 'response_code': 'OK' })
-            ctx.set({ 'trans_id': '0' })
-            // ctx.set({ 'trans_id': 'RTEnrollDataAction' })
-            ctx.set({ 'ResponseNo': 200 })
         } else {
             ctx.set({ 'response_code': 'ERROR' })
         }
