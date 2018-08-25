@@ -31,32 +31,37 @@ router.post('/', async ctx => {
     //     ctx.body = 'success'
     //     return
     // }
+    console.log(ctx.headers['request_code'])
     ctx.set({ 'content-type': 'application/octet-stream' })
     if (ctx.headers['request_code'] == 'realtime_enroll_data') {
         console.log(ctx.headers)
         const data = await parsePostData(ctx)
-        // console.log(data)
+        console.log(data)
         if (data) {
             ctx.set({ 'response_code': 'OK' })
-            ctx.set({ 'trans_id': 'RTEnrollDataAction' })
+            ctx.set({ 'trans_id': ctx.headers['trans_id'] })
         } else {
             ctx.set({ 'response_code': 'ERROR' })
         }
-        ctx.body = '{"response_code":"OK"}'
-        // console.log(ctx.response)
+        ctx.body = 'OK'
+        console.log(ctx.response)
+        return
     }
     if (ctx.headers['request_code'] == 'realtime_glog') {
+        console.log(ctx.headers)
         const data = await parsePostData(ctx)
-        // console.log(data)
+        console.log(data)
         if (data) {
             ctx.set({ 'response_code': 'OK' })
+            ctx.set({ 'trans_id': ctx.headers['trans_id'] })
         } else {
             ctx.set({ 'response_code': 'ERROR' })
         }
-        ctx.body = '{"response_code":"OK"}'
-        // console.log(ctx.response)
+        ctx.body = 'OK'
+        console.log(ctx.response)
+        return
     }
-    // ctx.body = 'success'
+    ctx.body = 'success'
 })
 
 module.exports = router
