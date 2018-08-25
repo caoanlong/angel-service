@@ -20,7 +20,7 @@ function parsePostData( ctx ) {
     })
 }
 router.post('/', async ctx => {
-    // console.log(ctx.headers['request_code'])
+     
     // if (ctx.headers['request_code'] == 'receive_cmd') {
     //     console.log(111)
     //     ctx.set({ 'cmd_code': 'GET_ENROLL_DATA' })
@@ -34,15 +34,20 @@ router.post('/', async ctx => {
     // }
     ctx.set({ 'content-type': 'application/octet-stream' })
     if (ctx.headers['request_code'] == 'realtime_enroll_data') {
+        // console.log(ctx.headers)
         const data = await parsePostData(ctx)
-        // console.log(data)
+        console.log(data)
         if (data) {
             ctx.set({ 'response_code': 'OK' })
+            ctx.set({ 'trans_id': '0' })
+            // ctx.set({ 'trans_id': 'RTEnrollDataAction' })
+            ctx.set({ 'ResponseNo': 200 })
         } else {
             ctx.set({ 'response_code': 'ERROR' })
         }
-        ctx.body = '{"response_code":"OK"}'
-        // console.log(ctx.response)
+        ctx.ResponseNo = 200
+        ctx.body = null
+        console.log(ctx.response)
     }
     if (ctx.headers['request_code'] == 'realtime_glog') {
         const data = await parsePostData(ctx)
@@ -52,7 +57,7 @@ router.post('/', async ctx => {
         } else {
             ctx.set({ 'response_code': 'ERROR' })
         }
-        ctx.body = '{"response_code":"OK"}'
+        ctx.body = null
         // console.log(ctx.response)
     }
     // ctx.body = 'success'
