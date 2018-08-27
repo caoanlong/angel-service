@@ -28,10 +28,11 @@ router.post('/', async ctx => {
         console.log(data)
         if (data) {
             ctx.set({ 'response_code': 'OK' })
-            ctx.set({ 'trans_id': 'RTEnrollDataAction' })        } else {
+            ctx.set({ 'trans_id': 'RTEnrollDataAction' })
             ctx.set({ 'response_code': 'ERROR' })
         }
-        // console.log(ctx.response)    }
+        console.log(ctx.response)
+    }
     if (ctx.headers['request_code'] == 'realtime_glog') {
         console.log(ctx.headers)
         const data = await parsePostData(ctx)
