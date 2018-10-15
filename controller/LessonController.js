@@ -12,11 +12,12 @@ class LessonController extends BaseController {
 	 */
 	findList() {
 		return async ctx => {
-			let { pageIndex = 1, pageSize = 10, keyword, storeId, startTime, endTime } = ctx.query
+			let { pageIndex = 1, pageSize = 10, keyword, memberId, storeId, startTime, endTime } = ctx.query
 			pageIndex = Math.max(Number(pageIndex), 1)
 			pageSize = Number(pageSize)
 			const offset = (pageIndex - 1) * pageSize
 			const where = {}
+			if (memberId) where['memberId'] = memberId
 			if (storeId) where['storeId'] = storeId
 			if (startTime || endTime) where['createTime'] = {}
 			if (startTime) where['createTime']['$gte'] = new Date(Number(startTime))

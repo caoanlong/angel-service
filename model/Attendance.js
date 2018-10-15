@@ -25,10 +25,14 @@ const Attendance = sequelize.define('attendance', {
     // 状态
     status: {
         type: Sequelize.STRING(16),
-        defaultValue: 'success'
+        defaultValue: 'confirm'
     },
-    // 创建时间
+    // 打卡时间
     createTime: {
+        type: Sequelize.DATE
+    },
+    // 确认时间
+    confirmTime: {
         type: Sequelize.DATE
     }
 })

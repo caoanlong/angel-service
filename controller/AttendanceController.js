@@ -2,7 +2,7 @@ const BaseController = require('./BaseController')
 const Attendance = require('../model/Attendance')
 const Member = require('../model/Member')
 const SysStore = require('../model/SysStore')
-const validator = require('validator')
+const Lesson = require('../model/Lesson')
 const { snowflake } = require('../utils')
 
 class AttendanceController extends BaseController {
@@ -72,7 +72,7 @@ class AttendanceController extends BaseController {
 		}
 	}
 	/**
-	 * 添加(考勤打卡)
+	 * 添加考勤
 	 */
 	create() {
 		return async ctx => {
@@ -87,6 +87,55 @@ class AttendanceController extends BaseController {
 					createTime: new Date()
 				}
 				await Attendance.create(data)
+				ctx.set({ 'response_code': 'OK' })
+            	ctx.set({ 'trans_id': 'RTEnrollDataAction' })
+				ctx.body = this.responseSussess()
+			} catch (err) {
+				ctx.body = this.responseError(err)
+			}
+		}
+	}
+
+	/**
+	 * 考勤机操作
+	 */
+	createByAttendance(memberId) {
+		return async ctx => {
+			const attendanceId = snowflake.nextId()
+			try {
+				const member = await Member.findById(memberId)
+				const data = {
+					attendanceId,
+					memberId,
+					storeId: member.storeId,
+					createTime: new Date()
+				}
+				await Attendance.create(data)
+				ctx.set({ 'response_code': 'OK' })
+            	ctx.set({ 'trans_id': 'RTEnrollDataAction' })
+				ctx.body = this.responseSussess()
+			} catch (err) {
+				ctx.body = this.responseError(err)
+			}
+		}
+	}
+
+	/**
+	 * 确认考勤
+	 */
+	confirmAttendance() {
+		return async ctx => {
+			const { attendanceId, lessonId } = ctx.request.body
+			try {
+				const data = {
+					status: 'success',
+					confirmTime: new Date()
+				}
+				const lesson = await Lesson.findById(lessonId)
+				if (lesson.validityDate < new Date()) throw ('该会员课程已过期！')
+				if (lesson.totalNum == lesson.num) throw ('该会员课程剩余课时不足！')
+				await Attendance.update(data, { where: { attendanceId } })
+				await Lesson.update({ num: lesson.num + 1 }, { where: { lessonId } })
 				ctx.body = this.responseSussess()
 			} catch (err) {
 				ctx.body = this.responseError(err)

@@ -11,6 +11,9 @@ router.get('/info', new AttendanceController().findById())
 /* 添加 */
 router.post('/add', new AttendanceController().create())
 
+/* 确认考勤 */
+router.post('/confirm', new AttendanceController().confirmAttendance())
+
 /* 测试 */
 router.all('/test', new AttendanceController().test())
 

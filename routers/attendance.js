@@ -1,5 +1,6 @@
 const Router = require('koa-router')
 const router = new Router()
+const AttendanceController = require('../controller/AttendanceController')
 
 function parsePostData( ctx ) {
     return new Promise((resolve, reject) => {
@@ -27,12 +28,11 @@ router.post('/', async ctx => {
         const data = await parsePostData(ctx)
         console.log(data)
         if (data) {
-            ctx.set({ 'response_code': 'OK' })
-            ctx.set({ 'trans_id': 'RTEnrollDataAction' })
+            new AttendanceController().createByAttendance(data.user_id)
+            return
         } else {
             ctx.set({ 'response_code': 'ERROR' })
         }
-        console.log(ctx.response)   
     }
     if (ctx.headers['request_code'] == 'realtime_glog') {
         console.log(ctx.headers)
@@ -41,11 +41,13 @@ router.post('/', async ctx => {
         if (data) {
             ctx.set({ 'response_code': 'OK' })
             ctx.set({ 'trans_id': ctx.headers['trans_id'] })
+            ctx.body = 'success'
+            return
         } else {
             ctx.set({ 'response_code': 'ERROR' })
         }
     }
-    ctx.body = 'success'
+    ctx.body = 'error'
 })
 
 module.exports = router
