@@ -1,11 +1,11 @@
 module.exports = {
 	port: 3002,
 	mysql: {
-        host: 'rm-wz9z0k2jfpf2ikzy3.mysql.rds.aliyuncs.com',
+        host: '',
         port: 3306,
         user: 'root',
-        password: 'aA12345678',
-        database: 'angel'
+        password: '',
+        database: ''
     },
 	redis: {
 		host: '192.168.1.48',
